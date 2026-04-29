@@ -1,0 +1,263 @@
+"use client";
+
+import { useState } from "react";
+import { format } from "date-fns";
+import { TrendingUp, DollarSign, CalendarDays, XCircle, CheckCircle, BarChart2 } from "lucide-react";
+
+type DayData = { date: string; count: number; revenue: number; cancelled: number };
+type ServiceStat = { name: string; count: number; revenue: number };
+type StaffStat = { name: string; count: number; revenue: number };
+
+type Props = {
+  dailyData: DayData[];
+  topServices: ServiceStat[];
+  staffPerformance: StaffStat[];
+  totalRevenue: number;
+  totalCount: number;
+  cancelledCount: number;
+  completedCount: number;
+};
+
+const SERVICE_COLORS = ["#c9956b", "#7b9ec9", "#9ec97b", "#c97bb5", "#c9b56b", "#7bc9c9"];
+
+export function ReportsClient({
+  dailyData,
+  topServices,
+  staffPerformance,
+  totalRevenue,
+  totalCount,
+  cancelledCount,
+  completedCount,
+}: Props) {
+  const maxRevenue = Math.max(...dailyData.map((d) => d.revenue), 1);
+  const maxCount = Math.max(...dailyData.map((d) => d.count), 1);
+  const maxService = Math.max(...topServices.map((s) => s.count), 1);
+  const maxStaff = Math.max(...staffPerformance.map((s) => s.count), 1);
+
+  const avgRevenue = totalCount > 0 ? totalRevenue / totalCount : 0;
+  const completionRate = (totalCount + cancelledCount) > 0
+    ? Math.round((completedCount / (totalCount + cancelledCount)) * 100)
+    : 0;
+
+  const stats = [
+    {
+      label: "Total Revenue",
+      value: `$${totalRevenue.toFixed(2)}`,
+      sub: "Last 7 days (excl. cancelled)",
+      icon: DollarSign,
+      color: "#c9956b",
+    },
+    {
+      label: "Appointments",
+      value: totalCount.toString(),
+      sub: `${cancelledCount} cancelled`,
+      icon: CalendarDays,
+      color: "#7b9ec9",
+    },
+    {
+      label: "Avg. Ticket",
+      value: `$${avgRevenue.toFixed(2)}`,
+      sub: "per appointment",
+      icon: TrendingUp,
+      color: "#9ec97b",
+    },
+    {
+      label: "Completion Rate",
+      value: `${completionRate}%`,
+      sub: `${completedCount} completed`,
+      icon: CheckCircle,
+      color: "#c97bb5",
+    },
+  ];
+
+  return (
+    <div style={{ padding: "32px 36px", maxWidth: 1100 }}>
+      {/* Header */}
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>Reports</h1>
+        <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 2 }}>
+          Performance overview for the last 7 days
+        </p>
+      </div>
+
+      {/* Summary Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="animate-fade-in"
+            style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "18px 20px" }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+              <div style={{ width: 34, height: 34, borderRadius: 9, background: stat.color + "18", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <stat.icon size={16} color={stat.color} />
+              </div>
+            </div>
+            <div style={{ fontSize: 24, fontFamily: "var(--font-display)", fontWeight: 600 }}>{stat.value}</div>
+            <div style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 2 }}>{stat.label}</div>
+            <div style={{ fontSize: 11, color: stat.color, marginTop: 3 }}>{stat.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Charts row */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+
+        {/* Revenue Bar Chart */}
+        <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+            <BarChart2 size={15} color="var(--primary)" /> Daily Revenue
+          </h2>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 140 }}>
+            {dailyData.map((day) => {
+              const pct = (day.revenue / maxRevenue) * 100;
+              return (
+                <div key={day.date} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                  <div style={{ fontSize: 10, color: "var(--muted-foreground)", height: 16 }}>
+                    {day.revenue > 0 ? `$${day.revenue.toFixed(0)}` : ""}
+                  </div>
+                  <div
+                    title={`${day.date}: $${day.revenue.toFixed(2)}`}
+                    style={{
+                      width: "100%",
+                      height: `${Math.max(pct, 2)}%`,
+                      background: "linear-gradient(to top, var(--primary), var(--accent))",
+                      borderRadius: "4px 4px 0 0",
+                      minHeight: 4,
+                      transition: "height 0.3s ease",
+                    }}
+                  />
+                  <div style={{ fontSize: 10, color: "var(--muted-foreground)", textAlign: "center" }}>
+                    {format(new Date(day.date + "T12:00:00"), "EEE")}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bookings chart */}
+        <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+            <CalendarDays size={15} color="var(--primary)" /> Daily Bookings
+          </h2>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 140 }}>
+            {dailyData.map((day) => {
+              const pct = (day.count / maxCount) * 100;
+              const cancelPct = day.cancelled > 0 ? (day.cancelled / (day.count + day.cancelled)) * 100 : 0;
+              return (
+                <div key={day.date} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                  <div style={{ fontSize: 10, color: "var(--muted-foreground)", height: 16 }}>
+                    {day.count > 0 ? day.count : ""}
+                  </div>
+                  <div style={{ width: "100%", display: "flex", flexDirection: "column", minHeight: 4 }}>
+                    {day.cancelled > 0 && (
+                      <div style={{ width: "100%", height: `${cancelPct}%`, background: "#fde8e8", borderRadius: "2px 2px 0 0", minHeight: 3 }} />
+                    )}
+                    <div
+                      style={{
+                        width: "100%",
+                        height: `${Math.max(pct, 2)}%`,
+                        background: "linear-gradient(to top, #7b9ec9, #a8c4e0)",
+                        borderRadius: day.cancelled > 0 ? "0" : "4px 4px 0 0",
+                        minHeight: 4,
+                        flex: 1,
+                      }}
+                    />
+                  </div>
+                  <div style={{ fontSize: 10, color: "var(--muted-foreground)", textAlign: "center" }}>
+                    {format(new Date(day.date + "T12:00:00"), "EEE")}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display: "flex", gap: 12, marginTop: 10, fontSize: 11, color: "var(--muted-foreground)" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <span style={{ width: 8, height: 8, borderRadius: 2, background: "#7b9ec9", display: "inline-block" }} />
+              Completed
+            </span>
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <span style={{ width: 8, height: 8, borderRadius: 2, background: "#fde8e8", display: "inline-block", border: "1px solid #fca5a5" }} />
+              Cancelled
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom row */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+
+        {/* Top Services */}
+        <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 18 }}>Top Services</h2>
+          {topServices.length === 0 ? (
+            <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>No data yet</p>
+          ) : (
+            <div style={{ display: "grid", gap: 12 }}>
+              {topServices.map((svc, i) => {
+                const pct = (svc.count / maxService) * 100;
+                return (
+                  <div key={svc.name}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5, fontSize: 13 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: SERVICE_COLORS[i % SERVICE_COLORS.length], display: "inline-block", flexShrink: 0 }} />
+                        {svc.name}
+                      </div>
+                      <div style={{ display: "flex", gap: 14 }}>
+                        <span style={{ color: "var(--muted-foreground)" }}>{svc.count}x</span>
+                        <span style={{ color: "var(--primary)", fontWeight: 500 }}>${svc.revenue.toFixed(0)}</span>
+                      </div>
+                    </div>
+                    <div style={{ height: 5, background: "var(--muted)", borderRadius: 3, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${pct}%`, background: SERVICE_COLORS[i % SERVICE_COLORS.length], borderRadius: 3 }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Staff Performance */}
+        <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 18 }}>Staff Performance</h2>
+          {staffPerformance.length === 0 ? (
+            <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>No data yet</p>
+          ) : (
+            <div style={{ display: "grid", gap: 14 }}>
+              {staffPerformance.map((s, i) => {
+                const pct = (s.count / maxStaff) * 100;
+                return (
+                  <div key={s.name}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{
+                          width: 28, height: 28, borderRadius: "50%",
+                          background: "var(--primary-light)", color: "var(--primary)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 12, fontWeight: 600,
+                        }}>
+                          {s.name.charAt(0)}
+                        </div>
+                        <span style={{ fontSize: 13, fontWeight: 500 }}>{s.name}</span>
+                        {i === 0 && <span style={{ fontSize: 11, color: "#c9956b" }}>⭐</span>}
+                      </div>
+                      <div style={{ display: "flex", gap: 14, fontSize: 13 }}>
+                        <span style={{ color: "var(--muted-foreground)" }}>{s.count} appts</span>
+                        <span style={{ color: "var(--primary)", fontWeight: 500 }}>${s.revenue.toFixed(0)}</span>
+                      </div>
+                    </div>
+                    <div style={{ height: 5, background: "var(--muted)", borderRadius: 3, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${pct}%`, background: "linear-gradient(90deg, var(--primary), var(--accent))", borderRadius: 3 }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
