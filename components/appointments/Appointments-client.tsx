@@ -12,7 +12,7 @@ type Appointment = {
   id: string;
   startTime: Date | string;
   customerName: string;
-  customerEmail?: string | null;
+  customerPhone?: string | null;
   status: string;
   staffId: string;
   serviceId: string;
@@ -323,8 +323,8 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
                   </span>
                   <div>
                     <div style={{ fontWeight: 500 }}>{appt.customerName}</div>
-                    {appt.customerEmail && (
-                      <div style={{ fontSize: 11.5, color: "var(--muted-foreground)" }}>{appt.customerEmail}</div>
+                    {appt.customerPhone && (
+                      <div style={{ fontSize: 11.5, color: "var(--muted-foreground)" }}>{appt.customerPhone}</div>
                     )}
                   </div>
                   <span>{appt.service.name}</span>

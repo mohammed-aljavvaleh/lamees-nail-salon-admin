@@ -8,7 +8,7 @@ type Appointment = {
   id: string;
   startTime: Date | string;
   customerName: string;
-  customerEmail?: string | null;
+  customerPhone?: string | null;
   status: string;
   service: { name: string; price: number; duration: number };
   staff: { name: string };

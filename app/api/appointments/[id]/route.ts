@@ -23,7 +23,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     const data: Record<string, unknown> = {};
     if (body.customerName !== undefined) data.customerName = body.customerName;
-    if (body.customerEmail !== undefined) data.customerEmail = body.customerEmail;
+    if (body.customerPhone !== undefined) data.customerPhone = body.customerPhone;
     if (body.startTime !== undefined) data.startTime = new Date(body.startTime);
     if (body.serviceId !== undefined) data.serviceId = body.serviceId;
     if (body.staffId !== undefined) data.staffId = body.staffId;

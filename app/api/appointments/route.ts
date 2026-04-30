@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { customerName, customerEmail, startTime, serviceId, staffId } = body;
+    const { customerName, customerPhone, startTime, serviceId, staffId } = body;
 
     if (!customerName || !startTime || !serviceId || !staffId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     const appointment = await prisma.appointment.create({
       data: {
         customerName,
-        customerEmail: customerEmail || null,
+        customerPhone: customerPhone || null,
         startTime: new Date(startTime),
         serviceId,
         staffId,

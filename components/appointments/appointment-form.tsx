@@ -27,7 +27,7 @@ export function AppointmentForm({ services, staff }: Props) {
   const [error, setError] = useState("");
 
   const [customerName, setCustomerName] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const [serviceId, setServiceId] = useState(services[0]?.id || "");
   const [staffId, setStaffId] = useState(staff[0]?.id || "");
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
@@ -49,7 +49,7 @@ export function AppointmentForm({ services, staff }: Props) {
       const res = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerName, customerEmail, startTime: startTime.toISOString(), serviceId, staffId }),
+        body: JSON.stringify({ customerName, customerPhone, startTime: startTime.toISOString(), serviceId, staffId }),
       });
 
       if (!res.ok) {
@@ -103,13 +103,23 @@ export function AppointmentForm({ services, staff }: Props) {
                 />
               </div>
               <div>
-                <label style={labelStyle}>Email Address</label>
+                <label style={labelStyle}>Phone Number *</label>
                 <input
-                  type="email"
-                  value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
-                  placeholder="sarah@example.com (optional)"
+                  type="tel"
+                  value={customerPhone}
+                  onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, '');
+                  
+                  if (val.length <= 11){
+                    if (val.length >= 2 && !val.startsWith('05')) return;
+                    setCustomerPhone(val);
+                  }
+                 }
+                }
+                  pattern="05[0-9]{9}"
+                  placeholder="e.g. 05xxxxxxxxx"
+                  required
                   style={inputStyle}
+                
                 />
               </div>
             </div>

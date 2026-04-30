@@ -33,7 +33,7 @@ async function main() {
 
   // Staff
   const lamees = await prisma.staff.create({
-    data: { name: "Lamees Al-Rashid", role: "Owner" },
+    data: { name: "Lamees Bahaa", role: "Owner" },
   });
   const sara = await prisma.staff.create({
     data: { name: "Sara Ahmed", role: "Senior Technician" },
@@ -60,7 +60,7 @@ async function main() {
       // Today
       {
         customerName: "Aisha Malik",
-        customerEmail: "aisha@example.com",
+        customerPhone: "+90 50 100 0001",
         startTime: apptTime(0, 9, 0),
         serviceId: manicure.id,
         staffId: sara.id,
@@ -68,7 +68,7 @@ async function main() {
       },
       {
         customerName: "Reem Al-Farsi",
-        customerEmail: "reem@example.com",
+        customerPhone: "+90 50 100 0002",
         startTime: apptTime(0, 10, 30),
         serviceId: gel.id,
         staffId: lamees.id,
@@ -83,7 +83,7 @@ async function main() {
       },
       {
         customerName: "Lina Saeed",
-        customerEmail: "lina@example.com",
+        customerPhone: "+90 50 100 0003",
         startTime: apptTime(0, 14, 30),
         serviceId: acrylic.id,
         staffId: lamees.id,
@@ -100,7 +100,7 @@ async function main() {
       // Yesterday
       {
         customerName: "Mona Hassan",
-        customerEmail: "mona@example.com",
+        customerPhone: "+90 50 100 0004",
         startTime: apptTime(-1, 10, 0),
         serviceId: gel.id,
         staffId: sara.id,
@@ -124,7 +124,7 @@ async function main() {
       // 2 days ago
       {
         customerName: "Noura Ahmed",
-        customerEmail: "noura@example.com",
+        customerPhone: "+90 50 100 0005",
         startTime: apptTime(-2, 9, 30),
         serviceId: acrylic.id,
         staffId: lamees.id,
@@ -148,7 +148,7 @@ async function main() {
       },
       {
         customerName: "Hana Al-Dosari",
-        customerEmail: "hana@example.com",
+        customerPhone: "+90 50 100 0006",
         startTime: apptTime(-3, 15, 0),
         serviceId: manicure.id,
         staffId: sara.id,
@@ -158,7 +158,7 @@ async function main() {
       // Tomorrow
       {
         customerName: "Rawan Al-Otaibi",
-        customerEmail: "rawan@example.com",
+        customerPhone: "+90 50 100 0007",
         startTime: apptTime(1, 10, 0),
         serviceId: gel.id,
         staffId: sara.id,
@@ -182,7 +182,7 @@ async function main() {
       // Day after tomorrow
       {
         customerName: "Shahad Bilal",
-        customerEmail: "shahad@example.com",
+        customerPhone: "+90 50 100 0008",
         startTime: apptTime(2, 11, 0),
         serviceId: manicure.id,
         staffId: nour.id,
