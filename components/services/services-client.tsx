@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Clock, DollarSign, X, Check, Scissors } from "lucide-react";
+import { Plus, Pencil, Trash2, Clock, DollarSign, X, Check, Scissors, TurkishLira } from "lucide-react";
+import { useLang } from "@/components/providers/language-provider";
 
 type Service = { id: string; name: string; price: number; duration: number };
 
 export function ServicesClient({ initialServices }: { initialServices: Service[] }) {
+  const { t } = useLang();
   const [services, setServices] = useState(initialServices);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -84,7 +86,7 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this service? Any associated appointments will be affected.")) return;
+    if (!confirm(t.services.deleteConfirm)) return;
     setLoadingId(id);
     try {
       const res = await fetch(`/api/services/${id}`, { method: "DELETE" });
@@ -107,22 +109,22 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
         <div>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>Services</h1>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>{t.services.title}</h1>
           <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 2 }}>
-            Manage your nail salon service menu
+            {t.services.subtitle}
           </p>
         </div>
         <button onClick={openCreate} style={primaryBtnStyle}>
-          <Plus size={15} /> Add Service
+          <Plus size={15} /> {t.services.addService}
         </button>
       </div>
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
         {[
-          { label: "Total Services", value: services.length.toString(), icon: Scissors, color: "#c9956b" },
-          { label: "Avg Duration", value: `${avgDuration} min`, icon: Clock, color: "#7b9ec9" },
-          { label: "Price Range", value: services.length ? `$${Math.min(...services.map(s => s.price))} – $${Math.max(...services.map(s => s.price))}` : "—", icon: DollarSign, color: "#9ec97b" },
+          { label: t.services.total, value: services.length.toString(), icon: Scissors, color: "#c9956b" },
+          { label: t.services.duration, value: `${avgDuration} ${t.services.min}`, icon: Clock, color: "#7b9ec9" },
+          { label: t.services.priceRange, value: services.length ? `₺${Math.min(...services.map(s => s.price))} – ₺${Math.max(...services.map(s => s.price))}` : "—", icon: TurkishLira, color: "#9ec97b" },
         ].map((stat) => (
           <div key={stat.label} style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 18px", display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ width: 38, height: 38, borderRadius: 10, background: stat.color + "18", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -140,8 +142,8 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
       {services.length === 0 ? (
         <div style={{ background: "var(--card)", border: "2px dashed var(--border)", borderRadius: 12, padding: "60px 24px", textAlign: "center" }}>
           <Scissors size={36} style={{ margin: "0 auto 12px", color: "var(--muted-foreground)", opacity: 0.5 }} />
-          <p style={{ color: "var(--muted-foreground)", marginBottom: 16 }}>No services yet</p>
-          <button onClick={openCreate} style={primaryBtnStyle}>Add your first service</button>
+          <p style={{ color: "var(--muted-foreground)", marginBottom: 16 }}>{t.services.noServices}</p>
+          <button onClick={openCreate} style={primaryBtnStyle}>{t.services.noServicesDesc}</button>
         </div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14 }}>
@@ -169,10 +171,10 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
                 </h3>
                 <div style={{ display: "flex", gap: 14, color: "var(--muted-foreground)", fontSize: 13, marginBottom: 16 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <Clock size={13} />{svc.duration} min
+                    <Clock size={13} />{svc.duration} {t.services.min}
                   </span>
                   <span style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--primary)", fontWeight: 600 }}>
-                    <DollarSign size={13} />{svc.price.toFixed(2)}
+                    <TurkishLira size={13} />{svc.price.toFixed(2)}
                   </span>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
@@ -180,13 +182,13 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
                     onClick={() => openEdit(svc)}
                     style={{ ...smallBtnStyle, color: "var(--foreground)" }}
                   >
-                    <Pencil size={12} /> Edit
+                    <Pencil size={12} /> {t.common.edit}
                   </button>
                   <button
                     onClick={() => handleDelete(svc.id)}
                     style={{ ...smallBtnStyle, color: "var(--destructive)" }}
                   >
-                    <Trash2 size={12} /> Delete
+                    <Trash2 size={12} /> {t.common.delete}
                   </button>
                 </div>
               </div>
@@ -213,7 +215,7 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22 }}>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22 }}>
-                {editId ? "Edit Service" : "New Service"}
+                {editId ? t.services.editService : t.services.newService}
               </h2>
               <button onClick={closeForm} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--muted-foreground)" }}>
                 <X size={18} />
@@ -223,11 +225,11 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
             <form onSubmit={handleSubmit}>
               <div style={{ display: "grid", gap: 16 }}>
                 <div>
-                  <label style={labelStyle}>Service Name *</label>
+                  <label style={labelStyle}>{t.services.name}</label>
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Classic Manicure"
+                    placeholder="örn. Classic Manicure"
                     required
                     style={inputStyle}
                     autoFocus
@@ -235,20 +237,20 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                   <div>
-                    <label style={labelStyle}>Price ($) *</label>
+                    <label style={labelStyle}>{t.services.price}</label>
                     <input
                       type="number"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
-                      placeholder="25.00"
+                      placeholder="250.00 ₺"
                       min="0"
-                      step="0.50"
+                      step="10"
                       required
                       style={inputStyle}
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Duration (min) *</label>
+                    <label style={labelStyle}>{t.services.duration}</label>
                     <input
                       type="number"
                       value={duration}
@@ -270,14 +272,14 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
 
                 <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
                   <button type="button" onClick={closeForm} style={{ ...btnStyle, flex: 1, background: "var(--muted)", color: "var(--foreground)" }}>
-                    Cancel
+                    {t.services.cancel}
                   </button>
                   <button
                     type="submit"
                     disabled={loadingId === "form"}
                     style={{ ...btnStyle, flex: 2, background: "var(--primary)", color: "white", opacity: loadingId === "form" ? 0.7 : 1 }}
                   >
-                    {loadingId === "form" ? "Saving..." : editId ? "Save Changes" : "Add Service"}
+                    {loadingId === "form" ? "Saving..." : editId ? t.services.save : t.services.addService}
                   </button>
                 </div>
               </div>

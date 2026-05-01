@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { CalendarDays, DollarSign, Clock, Users, Scissors, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { useLang } from "@/components/providers/language-provider";
 
 type Appointment = {
   id: string;
@@ -29,37 +30,39 @@ export function DashboardClient({
   servicesCount,
   staffCount,
 }: Props) {
+  const { t } = useLang();
+
   const completed = todayAppointments.filter((a) => a.status === "COMPLETED").length;
   const cancelled = todayAppointments.filter((a) => a.status === "CANCELLED").length;
   const scheduled = todayAppointments.filter((a) => a.status === "SCHEDULED").length;
 
   const stats = [
     {
-      label: "Today's Revenue",
+      label: t.dashboard.todayRevenue,
       value: `$${todayRevenue.toFixed(2)}`,
       icon: DollarSign,
-      sub: `${todayAppointments.length} appointments`,
+      sub: `${todayAppointments.length} ${t.dashboard.appointments}`,
       color: "#c9956b",
     },
     {
-      label: "Upcoming",
+      label: t.dashboard.upcoming,
       value: upcomingCount.toString(),
       icon: CalendarDays,
-      sub: "scheduled from now",
+      sub: t.dashboard.scheduledFromNow,
       color: "#7b9ec9",
     },
     {
-      label: "Services",
+      label: t.dashboard.services,
       value: servicesCount.toString(),
       icon: Scissors,
-      sub: "available",
+      sub: t.dashboard.available,
       color: "#9ec97b",
     },
     {
-      label: "Staff",
+      label: t.dashboard.staff,
       value: staffCount.toString(),
       icon: Users,
-      sub: "team members",
+      sub: t.dashboard.teamMembers,
       color: "#c97bb5",
     },
   ];
@@ -72,7 +75,7 @@ export function DashboardClient({
           {format(new Date(), "EEEE, MMMM d, yyyy")}
         </p>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: 32, fontWeight: 500, color: "var(--foreground)" }}>
-          Good {getGreeting()}, Admin
+          {getGreeting(t)}
         </h1>
       </div>
 
@@ -116,12 +119,12 @@ export function DashboardClient({
         ))}
       </div>
 
-      {/* Today's Status row */}
+      {/* Status row */}
       <div style={{ display: "flex", gap: 12, marginBottom: 28 }}>
         {[
-          { label: "Scheduled", value: scheduled, color: "#1a6fa0", bg: "#e8f4fd" },
-          { label: "Completed", value: completed, color: "#2d7a2d", bg: "#e8f5e8" },
-          { label: "Cancelled", value: cancelled, color: "#a01a1a", bg: "#fde8e8" },
+          { label: t.dashboard.scheduled, value: scheduled, color: "#1a6fa0", bg: "#e8f4fd" },
+          { label: t.dashboard.completed, value: completed, color: "#2d7a2d", bg: "#e8f5e8" },
+          { label: t.dashboard.cancelled, value: cancelled, color: "#a01a1a", bg: "#fde8e8" },
         ].map((s) => (
           <div
             key={s.label}
@@ -150,7 +153,7 @@ export function DashboardClient({
             textDecoration: "none",
           }}
         >
-          + New Appointment
+          + {t.dashboard.newAppointment}
         </Link>
       </div>
 
@@ -173,20 +176,17 @@ export function DashboardClient({
           }}
         >
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: 19, fontWeight: 500 }}>
-            Today&apos;s Schedule
+            {t.dashboard.todaySchedule}
           </h2>
-          <Link
-            href="/appointments"
-            style={{ fontSize: 12.5, color: "var(--primary)", textDecoration: "none" }}
-          >
-            View all →
+          <Link href="/appointments" style={{ fontSize: 12.5, color: "var(--primary)", textDecoration: "none" }}>
+            {t.dashboard.viewAll}
           </Link>
         </div>
 
         {todayAppointments.length === 0 ? (
           <div style={{ padding: "48px 22px", textAlign: "center", color: "var(--muted-foreground)" }}>
             <CalendarDays size={32} style={{ margin: "0 auto 12px", opacity: 0.4 }} />
-            <p>No appointments scheduled for today</p>
+            <p>{t.dashboard.noAppointments}</p>
           </div>
         ) : (
           <div>
@@ -203,7 +203,6 @@ export function DashboardClient({
                   gap: 16,
                 }}
               >
-                {/* Time */}
                 <div style={{ width: 64, flexShrink: 0 }}>
                   <div style={{ fontSize: 13.5, fontWeight: 500 }}>
                     {format(new Date(appt.startTime), "h:mm")}
@@ -213,64 +212,35 @@ export function DashboardClient({
                   </div>
                 </div>
 
-                {/* Avatar */}
                 <div
                   style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: "50%",
+                    width: 36, height: 36, borderRadius: "50%",
                     background: "var(--primary-light)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: "var(--primary)",
-                    flexShrink: 0,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 14, fontWeight: 600, color: "var(--primary)", flexShrink: 0,
                   }}
                 >
                   {appt.customerName.charAt(0).toUpperCase()}
                 </div>
 
-                {/* Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 500, fontSize: 13.5, marginBottom: 2 }}>
-                    {appt.customerName}
-                  </div>
+                  <div style={{ fontWeight: 500, fontSize: 13.5, marginBottom: 2 }}>{appt.customerName}</div>
                   <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
                     {appt.service.name} · {appt.staff.name}
                   </div>
                 </div>
 
-                {/* Duration */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 4,
-                    color: "var(--muted-foreground)",
-                    fontSize: 12,
-                  }}
-                >
-                  <Clock size={12} />
-                  {appt.service.duration}m
+                <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--muted-foreground)", fontSize: 12 }}>
+                  <Clock size={12} />{appt.service.duration}m
                 </div>
 
-                {/* Price */}
                 <div style={{ fontSize: 13.5, fontWeight: 500, color: "var(--primary)", width: 60, textAlign: "right" }}>
                   ${appt.service.price}
                 </div>
 
-                {/* Status */}
                 <span
                   className={`status-${appt.status.toLowerCase()}`}
-                  style={{
-                    padding: "3px 10px",
-                    borderRadius: 20,
-                    fontSize: 11,
-                    fontWeight: 500,
-                    textTransform: "capitalize",
-                  }}
+                  style={{ padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 500, textTransform: "capitalize" }}
                 >
                   {appt.status.toLowerCase()}
                 </span>
@@ -283,9 +253,9 @@ export function DashboardClient({
   );
 }
 
-function getGreeting() {
+function getGreeting(t: ReturnType<typeof useLang>["t"]) {
   const h = new Date().getHours();
-  if (h < 12) return "morning";
-  if (h < 17) return "afternoon";
-  return "evening";
+  if (h < 12) return t.dashboard.greeting_morning;
+  if (h < 17) return t.dashboard.greeting_afternoon;
+  return t.dashboard.greeting_evening;
 }

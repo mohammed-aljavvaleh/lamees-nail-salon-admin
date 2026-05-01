@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Pencil, Trash2, X, Users, CalendarDays, DollarSign } from "lucide-react";
+import { useLang } from "@/components/providers/language-provider";
 
 type StaffMember = {
   id: string;
@@ -22,6 +23,7 @@ const AVATAR_COLORS = [
 ];
 
 export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
+  const { t } = useLang();
   const [staff, setStaff] = useState(initialStaff);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -117,22 +119,22 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
         <div>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>Staff</h1>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>{t.staff.title}</h1>
           <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 2 }}>
-            {staff.length} team member{staff.length !== 1 ? "s" : ""}
+            {t.staff.subtitle}
           </p>
         </div>
         <button onClick={openCreate} style={primaryBtnStyle}>
-          <Plus size={15} /> Add Staff Member
+          <Plus size={15} /> {t.staff.addMember}
         </button>
       </div>
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
         {[
-          { label: "Total Team", value: staff.length.toString(), icon: Users, color: "#c9956b" },
-          { label: "Total Appointments", value: totalAppointments.toString(), icon: CalendarDays, color: "#7b9ec9" },
-          { label: "Revenue Generated", value: `$${totalRevenue.toFixed(0)}`, icon: DollarSign, color: "#9ec97b" },
+          { label: t.staff.totalTeam, value: staff.length.toString(), icon: Users, color: "#c9956b" },
+          { label: t.appointments.totalAppointments, value: totalAppointments.toString(), icon: CalendarDays, color: "#7b9ec9" },
+          { label: t.staff.revenueGenerated, value: `₺${totalRevenue.toFixed(0)}`, icon: DollarSign, color: "#9ec97b" },
         ].map((stat) => (
           <div key={stat.label} style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 10, padding: "16px 18px", display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ width: 38, height: 38, borderRadius: 10, background: stat.color + "18", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -150,18 +152,18 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
       {staff.length === 0 ? (
         <div style={{ background: "var(--card)", border: "2px dashed var(--border)", borderRadius: 12, padding: "60px 24px", textAlign: "center" }}>
           <Users size={36} style={{ margin: "0 auto 12px", color: "var(--muted-foreground)", opacity: 0.5 }} />
-          <p style={{ color: "var(--muted-foreground)", marginBottom: 16 }}>No staff members yet</p>
-          <button onClick={openCreate} style={primaryBtnStyle}>Add your first team member</button>
+          <p style={{ color: "var(--muted-foreground)", marginBottom: 16 }}>{t.staff.noStaff}</p>
+          <button onClick={openCreate} style={primaryBtnStyle}>{t.staff.addFirst}</button>
         </div>
       ) : (
         <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
           {/* Table header */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 160px 120px 140px 100px", padding: "10px 20px", borderBottom: "1px solid var(--border)", fontSize: 11, fontWeight: 600, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            <span>Name</span>
-            <span>Role</span>
-            <span>Appointments</span>
-            <span>Revenue</span>
-            <span>Actions</span>
+            <span>{t.staff.name}</span>
+            <span>{t.staff.role}</span>
+            <span>{t.appointments.appointments}</span>
+            <span>{t.staff.revenue}</span>
+            <span>{t.common.actions}</span>
           </div>
 
           {staff.map((member, i) => {
@@ -213,7 +215,7 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
 
                 {/* Revenue */}
                 <div style={{ fontSize: 14, fontWeight: 500, color: "var(--primary)" }}>
-                  ${member.totalRevenue.toFixed(2)}
+                  ₺{member.totalRevenue.toFixed(2)}
                 </div>
 
                 {/* Actions */}
@@ -240,7 +242,7 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
           <div className="animate-scale-in" style={{ background: "var(--card)", borderRadius: 14, padding: "28px 30px", width: 420, boxShadow: "0 20px 60px rgba(0,0,0,0.15)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22 }}>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22 }}>
-                {editId ? "Edit Staff Member" : "Add Team Member"}
+                {editId ? t.staff.editMember : t.staff.addMember}
               </h2>
               <button onClick={closeForm} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--muted-foreground)" }}>
                 <X size={18} />
@@ -250,18 +252,18 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
             <form onSubmit={handleSubmit}>
               <div style={{ display: "grid", gap: 16 }}>
                 <div>
-                  <label style={labelStyle}>Full Name *</label>
+                  <label style={labelStyle}>{t.staff.name}</label>
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Lamees Al-Hassan"
+                    placeholder="örn. Lamees Bahaa"
                     required
                     style={inputStyle}
                     autoFocus
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>Role</label>
+                  <label style={labelStyle}>{t.staff.role}</label>
                   <select value={role} onChange={(e) => setRole(e.target.value)} style={inputStyle}>
                     {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
                   </select>
@@ -275,10 +277,10 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
 
                 <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
                   <button type="button" onClick={closeForm} style={{ ...btnStyle, flex: 1, background: "var(--muted)", color: "var(--foreground)" }}>
-                    Cancel
+                    {t.staff.cancel}
                   </button>
                   <button type="submit" disabled={loadingId === "form"} style={{ ...btnStyle, flex: 2, background: "var(--primary)", color: "white", opacity: loadingId === "form" ? 0.7 : 1 }}>
-                    {loadingId === "form" ? "Saving..." : editId ? "Save Changes" : "Add Member"}
+                    {loadingId === "form" ? "Saving..." : editId ? "Save Changes" : t.staff.addMember}
                   </button>
                 </div>
               </div>

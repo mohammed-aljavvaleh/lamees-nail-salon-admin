@@ -5,6 +5,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameM
 import { ChevronLeft, ChevronRight, Plus, Calendar, List, Search, Clock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLang } from "@/components/providers/language-provider";
 
 type Service = { id: string; name: string; price: number; duration: number };
 type Staff = { id: string; name: string; role: string };
@@ -30,6 +31,7 @@ type View = "calendar" | "list";
 
 export function AppointmentsClient({ initialAppointments, services, staff }: Props) {
   const router = useRouter();
+  const { t } = useLang();
   const [appointments, setAppointments] = useState(initialAppointments);
   const [view, setView] = useState<View>("calendar");
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -90,7 +92,7 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
   }
 
   async function deleteAppt(id: string) {
-    if (!confirm("Delete this appointment?")) return;
+    if (!confirm(t.appointments.deleteConfirm)) return;
     setLoadingId(id);
     try {
       await fetch(`/api/appointments/${id}`, { method: "DELETE" });
@@ -105,9 +107,9 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
         <div>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>Appointments</h1>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>{t.appointments.title}</h1>
           <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 2 }}>
-            {appointments.length} total appointments
+            {appointments.length} {t.appointments.totalAppointments}
           </p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
@@ -129,7 +131,7 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
                   gap: 6,
                 }}
               >
-                {v === "calendar" ? <Calendar size={14} /> : <List size={14} />}
+                {v === "calendar" ? <Calendar size={14}  />  : <List size={14} />}
                 {v.charAt(0).toUpperCase() + v.slice(1)}
               </button>
             ))}
@@ -149,7 +151,7 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
               textDecoration: "none",
             }}
           >
-            <Plus size={15} /> New Appointment
+            <Plus size={15} /> {t.appointments.newAppointment}
           </Link>
         </div>
       </div>
@@ -167,18 +169,18 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
                   <ChevronLeft size={16} />
                 </button>
                 <button onClick={() => setCurrentMonth(new Date())} style={{ ...navBtnStyle, fontSize: 12, padding: "4px 10px" }}>
-                  Today
+                  {t.reports.today}
                 </button>
                 <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} style={navBtnStyle}>
                   <ChevronRight size={16} />
-                </button>
+                </button> 
               </div>
             </div>
 
             <div style={{ padding: 16 }}>
               {/* Weekday headers */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", marginBottom: 8 }}>
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+                {[t.weekDays.sunday, t.weekDays.monday, t.weekDays.tuesday, t.weekDays.wedensday, t.weekDays.thursday, t.weekDays.friday, t.weekDays.saturday].map((d) => (
                   <div key={d} style={{ textAlign: "center", fontSize: 11, fontWeight: 500, color: "var(--muted-foreground)", padding: "4px 0" }}>
                     {d}
                   </div>
@@ -236,16 +238,16 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
           <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
             <div style={{ padding: "16px 18px", borderBottom: "1px solid var(--border)" }}>
               <h3 style={{ fontFamily: "var(--font-display)", fontSize: 17 }}>
-                {selectedDate ? format(selectedDate, "EEEE, MMMM d") : "Select a date"}
+                {selectedDate ? format(selectedDate, "EEEE, MMMM d") : t.appointments.selectDate}
               </h3>
               <p style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 2 }}>
-                {selectedDayAppts.length} appointment{selectedDayAppts.length !== 1 ? "s" : ""}
+                {selectedDayAppts.length} {t.appointments.appointment} {selectedDayAppts.length !== 1}
               </p>
             </div>
             <div style={{ overflowY: "auto", maxHeight: 500 }}>
               {selectedDayAppts.length === 0 ? (
                 <div style={{ padding: "36px 18px", textAlign: "center", color: "var(--muted-foreground)" }}>
-                  No appointments
+                  {t.appointments.noFound}
                 </div>
               ) : (
                 selectedDayAppts
@@ -274,18 +276,18 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search customer or service..."
+                placeholder={t.appointments.searchPlaceholder}
                 style={{ ...inputStyle, paddingLeft: 32, width: "100%" }}
               />
             </div>
             <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={inputStyle}>
-              <option value="ALL">All Status</option>
-              <option value="SCHEDULED">Scheduled</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="ALL">{t.appointments.allStatus}</option>
+              <option value="SCHEDULED">{t.appointments.statuses.scheduled}</option>
+              <option value="COMPLETED">{t.appointments.statuses.completed}</option>
+              <option value="CANCELLED">{t.appointments.statuses.cancelled}</option>
             </select>
             <select value={filterStaff} onChange={(e) => setFilterStaff(e.target.value)} style={inputStyle}>
-              <option value="ALL">All Staff</option>
+              <option value="ALL">{t.appointments.allStaff}</option>
               {staff.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
           </div>
@@ -293,17 +295,17 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
           <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
             {/* Table header */}
             <div style={{ display: "grid", gridTemplateColumns: "120px 1fr 140px 140px 90px 100px 120px", padding: "10px 18px", borderBottom: "1px solid var(--border)", fontSize: 11, fontWeight: 600, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              <span>Time</span>
-              <span>Customer</span>
-              <span>Service</span>
-              <span>Staff</span>
-              <span>Duration</span>
-              <span>Price</span>
-              <span>Status</span>
+              <span>{t.appointments.time}</span>
+              <span>{t.appointments.customer}</span>
+              <span>{t.appointments.service}</span>
+              <span>{t.appointments.staffCol}</span>
+              <span>{t.appointments.duration}</span>
+              <span>{t.appointments.price}</span>
+              <span>{t.appointments.status}</span>
             </div>
             {filteredList.length === 0 ? (
               <div style={{ padding: "40px", textAlign: "center", color: "var(--muted-foreground)" }}>
-                No appointments found
+                {t.appointments.noFound}
               </div>
             ) : (
               filteredList.map((appt, i) => (
@@ -330,9 +332,9 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
                   <span>{appt.service.name}</span>
                   <span>{appt.staff.name}</span>
                   <span style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--muted-foreground)", fontSize: 12.5 }}>
-                    <Clock size={12} />{appt.service.duration}m
+                    <Clock size={12} />{appt.service.duration} {t.services.min}
                   </span>
-                  <span style={{ color: "var(--primary)", fontWeight: 500 }}>${appt.service.price}</span>
+                  <span style={{ color: "var(--primary)", fontWeight: 500 }}>₺{appt.service.price}</span>
                   <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                     <select
                       value={appt.status}
@@ -347,9 +349,9 @@ export function AppointmentsClient({ initialAppointments, services, staff }: Pro
                         cursor: "pointer",
                       }}
                     >
-                      <option value="SCHEDULED">Scheduled</option>
-                      <option value="COMPLETED">Completed</option>
-                      <option value="CANCELLED">Cancelled</option>
+                      <option value="SCHEDULED">{t.appointments.statuses.scheduled}</option>
+                      <option value="COMPLETED">{t.appointments.statuses.completed}</option>
+                      <option value="CANCELLED">{t.appointments.statuses.cancelled}</option>
                     </select>
                     <button
                       onClick={() => deleteAppt(appt.id)}
@@ -411,7 +413,7 @@ function AppointmentCard({
                 onClick={() => onStatusChange(appt.id, "COMPLETED")}
                 style={{ ...smallBtnStyle, color: "#2d7a2d", background: "#e8f5e8" }}
               >
-                Complete
+                complete
               </button>
               <button
                 onClick={() => onStatusChange(appt.id, "CANCELLED")}
@@ -423,7 +425,7 @@ function AppointmentCard({
           )}
         </div>
         <div style={{ fontSize: 13, fontWeight: 500, color: "var(--primary)" }}>
-          ${appt.service.price}
+          ₺{appt.service.price}
         </div>
       </div>
     </div>

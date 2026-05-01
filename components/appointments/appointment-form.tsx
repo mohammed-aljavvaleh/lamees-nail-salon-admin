@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { format, addDays } from "date-fns";
-import { ArrowLeft, Clock, DollarSign, User, Mail, Calendar } from "lucide-react";
+import { ArrowLeft, Clock, DollarSign, User, Phone, Calendar } from "lucide-react";
 import Link from "next/link";
+import { useLang } from "@/components/providers/language-provider";
 
 type Service = { id: string; name: string; price: number; duration: number };
 type Staff = { id: string; name: string; role: string };
@@ -23,8 +24,10 @@ const TIME_SLOTS = [
 
 export function AppointmentForm({ services, staff }: Props) {
   const router = useRouter();
+  const { t } = useLang();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -35,11 +38,41 @@ export function AppointmentForm({ services, staff }: Props) {
 
   const selectedService = services.find((s) => s.id === serviceId);
 
+   // Phone: digits only, must start with 05, exactly 11 digits
+  function handlePhoneChange(value: string) {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    setCustomerPhone(digits);
+ 
+    if (digits.length === 0) {
+      setPhoneError("");
+    } else if (!digits.startsWith("05")) {
+      setPhoneError("Phone number must start with 05");
+    } else if (digits.length < 11) {
+      setPhoneError(`${digits.length}/11 digits — must be exactly 11`);
+    } else {
+      setPhoneError("");
+    }
+  }
+ 
+  function validatePhone(): boolean {
+    if (customerPhone.length === 0) return true; // optional
+    if (!customerPhone.startsWith("05")) {
+      setPhoneError("Phone number must start with 05");
+      return false;
+    }
+    if (customerPhone.length !== 11) {
+      setPhoneError("Phone number must be exactly 11 digits");
+      return false;
+    }
+    return true;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!customerName.trim()) { setError("Customer name is required"); return; }
-    if (!serviceId) { setError("Please select a service"); return; }
-    if (!staffId) { setError("Please select a staff member"); return; }
+    if (!customerName.trim()) { setError(t.appointmentForm.errors.nameRequired); return; }
+    if (!validatePhone()) return;
+    if (!serviceId) { setError(t.appointmentForm.errors.serviceRequired); return; }
+    if (!staffId) { setError(t.appointmentForm.errors.staffRequired); return; }
 
     setLoading(true);
     setError("");
@@ -49,7 +82,13 @@ export function AppointmentForm({ services, staff }: Props) {
       const res = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerName, customerPhone, startTime: startTime.toISOString(), serviceId, staffId }),
+        body: JSON.stringify({ 
+          customerName, 
+          customerPhone: customerPhone || undefined, 
+          startTime: startTime.toISOString(), 
+          serviceId, 
+          staffId, 
+        }),
       });
 
       if (!res.ok) {
@@ -60,7 +99,7 @@ export function AppointmentForm({ services, staff }: Props) {
       router.push("/appointments");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : t.appointmentForm.errors.failed);
     } finally {
       setLoading(false);
     }
@@ -74,53 +113,70 @@ export function AppointmentForm({ services, staff }: Props) {
           href="/appointments"
           style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--muted-foreground)", fontSize: 13, textDecoration: "none", marginBottom: 16 }}
         >
-          <ArrowLeft size={14} /> Back to appointments
+          <ArrowLeft size={14} /> {t.appointmentForm.back}
         </Link>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>
-          New Appointment
+           {t.appointmentForm.title}
         </h1>
         <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 4 }}>
-          Book a new appointment for a customer
+          {t.appointmentForm.subtitle}
         </p>
       </div>
 
       <form onSubmit={handleSubmit}>
         <div style={{ display: "grid", gap: 20 }}>
+
           {/* Customer Info */}
           <section style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "22px 24px" }}>
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-              <User size={15} color="var(--primary)" /> Customer Details
+              <User size={15} color="var(--primary)" /> {t.appointmentForm.customerInfo}
             </h2>
             <div style={{ display: "grid", gap: 14 }}>
+
+              {/* Name */}
               <div>
-                <label style={labelStyle}>Full Name *</label>
+                <label style={labelStyle}>{t.appointmentForm.fullName}</label>
                 <input
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="e.g. Sarah Johnson"
+                  placeholder={t.appointmentForm.fullNamePlaceholder}
                   required
                   style={inputStyle}
                 />
               </div>
+
+              {/* phone */}
               <div>
-                <label style={labelStyle}>Phone Number *</label>
+                <label style={labelStyle}>
+                  <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    <Phone size={11} /> {t.appointmentForm.phoneNumber}
+                  </span>
+                </label>
                 <input
                   type="tel"
+                  inputMode="numeric"
                   value={customerPhone}
-                  onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, '');
-                  
-                  if (val.length <= 11){
-                    if (val.length >= 2 && !val.startsWith('05')) return;
-                    setCustomerPhone(val);
-                  }
-                 }
-                }
-                  pattern="05[0-9]{9}"
-                  placeholder="e.g. 05xxxxxxxxx"
-                  required
-                  style={inputStyle}
-                
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  placeholder="05XXXXXXXXX"
+                  maxLength={11}
+                  style={{
+                    ...inputStyle,
+                    borderColor: phoneError ? "#c45c5c" : customerPhone.length === 11 && !phoneError ? "#2d7a2d" : "var(--border)",
+                  }}
                 />
+                {/* Live counter + validation feedback */}
+                <div style={{ marginTop: 5, minHeight: 18, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 12, color: phoneError ? "#c45c5c" : customerPhone.length === 11 ? "#2d7a2d" : "var(--muted-foreground)" }}>
+                    {phoneError
+                      ? phoneError
+                      : customerPhone.length === 11
+                      ? "✓ Valid phone number"
+                      : "Must start with 05 · exactly 11 digits"}
+                  </span>
+                  <span style={{ fontSize: 11, color: "var(--muted-foreground)", fontVariantNumeric: "tabular-nums" }}>
+                    {customerPhone.length}/11
+                  </span>
+                </div>
               </div>
             </div>
           </section>
@@ -128,7 +184,7 @@ export function AppointmentForm({ services, staff }: Props) {
           {/* Service Selection */}
           <section style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "22px 24px" }}>
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-              <DollarSign size={15} color="var(--primary)" /> Service
+              <DollarSign size={15} color="var(--primary)" /> {t.appointmentForm.service}
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {services.map((svc) => (
@@ -150,7 +206,7 @@ export function AppointmentForm({ services, staff }: Props) {
                   </div>
                   <div style={{ display: "flex", gap: 12, fontSize: 12, color: "var(--muted-foreground)" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                      <Clock size={11} />{svc.duration} min
+                      <Clock size={11} /> {svc.duration} min
                     </span>
                     <span style={{ color: "var(--primary)", fontWeight: 500 }}>${svc.price}</span>
                   </div>
@@ -159,7 +215,7 @@ export function AppointmentForm({ services, staff }: Props) {
             </div>
             {services.length === 0 && (
               <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>
-                No services added yet.{" "}
+                {t.appointmentForm.noServices}{" "}
                 <Link href="/services" style={{ color: "var(--primary)" }}>Add services →</Link>
               </p>
             )}
@@ -168,12 +224,13 @@ export function AppointmentForm({ services, staff }: Props) {
           {/* Staff & Time */}
           <section style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "22px 24px" }}>
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-              <Calendar size={15} color="var(--primary)" /> Schedule
+              <Calendar size={15} color="var(--primary)" /> {t.appointmentForm.dateTime}
             </h2>
             <div style={{ display: "grid", gap: 14 }}>
-              {/* Staff */}
+ 
+              {/* Staff picker */}
               <div>
-                <label style={labelStyle}>Assign Staff *</label>
+                <label style={labelStyle}>{t.appointmentForm.staffMember}</label>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {staff.map((s) => (
                     <button
@@ -200,16 +257,16 @@ export function AppointmentForm({ services, staff }: Props) {
                 </div>
                 {staff.length === 0 && (
                   <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>
-                    No staff added yet.{" "}
+                    {t.appointmentForm.noStaff}{" "}
                     <Link href="/staff" style={{ color: "var(--primary)" }}>Add staff →</Link>
                   </p>
                 )}
               </div>
-
-              {/* Date */}
+ 
+              {/* Date & Time */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 <div>
-                  <label style={labelStyle}>Date *</label>
+                  <label style={labelStyle}>{t.appointmentForm.date}</label>
                   <input
                     type="date"
                     value={date}
@@ -220,18 +277,18 @@ export function AppointmentForm({ services, staff }: Props) {
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>Time *</label>
+                  <label style={labelStyle}>{t.appointmentForm.timeSlot}</label>
                   <select value={time} onChange={(e) => setTime(e.target.value)} style={inputStyle}>
-                    {TIME_SLOTS.map((t) => (
-                      <option key={t} value={t}>{formatTime(t)}</option>
+                    {TIME_SLOTS.map((slot) => (
+                      <option key={slot} value={slot}>{formatTime(slot)}</option>
                     ))}
                   </select>
                 </div>
               </div>
             </div>
           </section>
-
-          {/* Summary */}
+ 
+          {/* Summary bar */}
           {selectedService && (
             <div style={{
               padding: "14px 18px",
@@ -251,41 +308,50 @@ export function AppointmentForm({ services, staff }: Props) {
               <span style={{ fontWeight: 600, fontSize: 16 }}>${selectedService.price}</span>
             </div>
           )}
-
+ 
           {error && (
             <div style={{ padding: "12px 16px", background: "#fde8e8", borderRadius: 8, color: "#a01a1a", fontSize: 13 }}>
               {error}
             </div>
           )}
-
+ 
+          {/* Actions */}
           <div style={{ display: "flex", gap: 10 }}>
             <Link
               href="/appointments"
               style={{ ...btnStyle, background: "var(--muted)", color: "var(--foreground)", textDecoration: "none", textAlign: "center" }}
             >
-              Cancel
+              {t.common.cancel}
             </Link>
             <button
               type="submit"
-              disabled={loading || !services.length || !staff.length}
-              style={{ ...btnStyle, background: "var(--primary)", color: "white", flex: 1, opacity: loading ? 0.7 : 1 }}
+              disabled={loading || !services.length || !staff.length || !!phoneError}
+              style={{
+                ...btnStyle,
+                background: "var(--primary)",
+                color: "white",
+                flex: 1,
+                opacity: (loading || !!phoneError) ? 0.7 : 1,
+                cursor: (loading || !!phoneError) ? "not-allowed" : "pointer",
+              }}
             >
-              {loading ? "Booking..." : "Book Appointment"}
+              {loading ? t.appointmentForm.scheduling : t.appointmentForm.schedule}
             </button>
           </div>
+ 
         </div>
       </form>
     </div>
   );
 }
-
-function formatTime(t: string) {
-  const [h, m] = t.split(":").map(Number);
+ 
+function formatTime(slot: string) {
+  const [h, m] = slot.split(":").map(Number);
   const ampm = h >= 12 ? "PM" : "AM";
   const h12 = h % 12 || 12;
   return `${h12}:${m.toString().padStart(2, "0")} ${ampm}`;
 }
-
+ 
 const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: 12,
@@ -295,7 +361,7 @@ const labelStyle: React.CSSProperties = {
   textTransform: "uppercase",
   letterSpacing: "0.05em",
 };
-
+ 
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 12px",
@@ -306,7 +372,7 @@ const inputStyle: React.CSSProperties = {
   color: "var(--foreground)",
   outline: "none",
 };
-
+ 
 const btnStyle: React.CSSProperties = {
   padding: "11px 24px",
   borderRadius: 8,

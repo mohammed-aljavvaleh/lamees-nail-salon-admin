@@ -10,17 +10,20 @@ import {
   BarChart2,
   Sparkles,
 } from "lucide-react";
-
-const nav = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/appointments", label: "Appointments", icon: CalendarDays },
-  { href: "/services", label: "Services", icon: Scissors },
-  { href: "/staff", label: "Staff", icon: Users },
-  { href: "/reports", label: "Reports", icon: BarChart2 },
-];
+import { useLang } from "@/components/providers/language-provider";
+import { LanguageToggle } from "@/components/layout/language-toggle";
 
 export function Sidebar() {
   const path = usePathname();
+  const { t } = useLang();
+
+  const nav = [
+    { href: "/", label: t.nav.dashboard, icon: LayoutDashboard },
+    { href: "/appointments", label: t.nav.appointments, icon: CalendarDays },
+    { href: "/services", label: t.nav.services, icon: Scissors },
+    { href: "/staff", label: t.nav.staff, icon: Users },
+    { href: "/reports", label: t.nav.reports, icon: BarChart2 },
+  ];
 
   return (
     <aside
@@ -103,12 +106,18 @@ export function Sidebar() {
         style={{
           padding: "16px 20px",
           borderTop: "1px solid var(--border)",
-          fontSize: 12,
-          color: "var(--muted-foreground)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
         }}
       >
-        <div style={{ fontFamily: "var(--font-display)", fontSize: 13, color: "var(--foreground)" }}>Admin Panel</div>
-        <div>v1.0.0</div>
+        <LanguageToggle />
+        <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 13, color: "var(--foreground)" }}>
+            {t.nav.adminPanel}
+          </div>
+          <div>v1.0.0</div>
+        </div>
       </div>
     </aside>
   );

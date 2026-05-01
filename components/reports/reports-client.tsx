@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { TrendingUp, DollarSign, CalendarDays, XCircle, CheckCircle, BarChart2 } from "lucide-react";
+import { TrendingUp, CalendarDays, XCircle, CheckCircle, BarChart2, TurkishLira} from "lucide-react";
+import { useLang } from "@/components/providers/language-provider";
+import { Appointment } from "@/app/generated/prisma";
+import { babelIncludeRegexes } from "next/dist/build/webpack-config";
 
-type DayData = { date: string; count: number; revenue: number; cancelled: number };
+type DayData = { date: string; count: number; revenue: number; cancelled: number; completed: number };
 type ServiceStat = { name: string; count: number; revenue: number };
 type StaffStat = { name: string; count: number; revenue: number };
 
@@ -29,6 +32,7 @@ export function ReportsClient({
   cancelledCount,
   completedCount,
 }: Props) {
+  const { t } = useLang();
   const maxRevenue = Math.max(...dailyData.map((d) => d.revenue), 1);
   const maxCount = Math.max(...dailyData.map((d) => d.count), 1);
   const maxService = Math.max(...topServices.map((s) => s.count), 1);
@@ -41,30 +45,30 @@ export function ReportsClient({
 
   const stats = [
     {
-      label: "Total Revenue",
-      value: `$${totalRevenue.toFixed(2)}`,
-      sub: "Last 7 days (excl. cancelled)",
-      icon: DollarSign,
+      label: t.reports.totalRevenue,
+      value: `₺${totalRevenue.toFixed(2)}`,
+      sub: t.reports.last7days,
+      icon: TurkishLira,
       color: "#c9956b",
     },
     {
-      label: "Appointments",
+      label: t.reports.totalBookings,
       value: totalCount.toString(),
-      sub: `${cancelledCount} cancelled`,
+      sub: `${cancelledCount} ${t.reports.cancelled}`,
       icon: CalendarDays,
       color: "#7b9ec9",
     },
     {
-      label: "Avg. Ticket",
-      value: `$${avgRevenue.toFixed(2)}`,
-      sub: "per appointment",
+      label: t.reports.AvgTicket,
+      value: `₺${avgRevenue.toFixed(2)}`,
+      sub: t.reports.perAppt,
       icon: TrendingUp,
       color: "#9ec97b",
     },
     {
-      label: "Completion Rate",
+      label: t.reports.completionRate,
       value: `${completionRate}%`,
-      sub: `${completedCount} completed`,
+      sub: `${completedCount} ${t.appointments.statuses.completed}`,
       icon: CheckCircle,
       color: "#c97bb5",
     },
@@ -74,9 +78,9 @@ export function ReportsClient({
     <div style={{ padding: "32px 36px", maxWidth: 1100 }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>Reports</h1>
+        <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>{t.reports.title}</h1>
         <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 2 }}>
-          Performance overview for the last 7 days
+          {t.reports.subtitle}
         </p>
       </div>
 
@@ -106,7 +110,7 @@ export function ReportsClient({
         {/* Revenue Bar Chart */}
         <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
-            <BarChart2 size={15} color="var(--primary)" /> Daily Revenue
+            <BarChart2 size={15} color="var(--primary)" /> {t.reports.dailyRevenue}
           </h2>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 140 }}>
             {dailyData.map((day) => {
@@ -114,10 +118,10 @@ export function ReportsClient({
               return (
                 <div key={day.date} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                   <div style={{ fontSize: 10, color: "var(--muted-foreground)", height: 16 }}>
-                    {day.revenue > 0 ? `$${day.revenue.toFixed(0)}` : ""}
+                    {day.revenue > 0 ? `₺${day.revenue.toFixed(0)}` : ""}
                   </div>
                   <div
-                    title={`${day.date}: $${day.revenue.toFixed(2)}`}
+                    title={`${day.date}: ₺${day.revenue.toFixed(2)}`}
                     style={{
                       width: "100%",
                       height: `${Math.max(pct, 2)}%`,
@@ -139,7 +143,7 @@ export function ReportsClient({
         {/* Bookings chart */}
         <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
-            <CalendarDays size={15} color="var(--primary)" /> Daily Bookings
+            <CalendarDays size={15} color="var(--primary)" /> {t.reports.dailyBookings}
           </h2>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 140 }}>
             {dailyData.map((day) => {
@@ -175,11 +179,11 @@ export function ReportsClient({
           <div style={{ display: "flex", gap: 12, marginTop: 10, fontSize: 11, color: "var(--muted-foreground)" }}>
             <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
               <span style={{ width: 8, height: 8, borderRadius: 2, background: "#7b9ec9", display: "inline-block" }} />
-              Completed
+              {t.appointments.statuses.completed}
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
               <span style={{ width: 8, height: 8, borderRadius: 2, background: "#fde8e8", display: "inline-block", border: "1px solid #fca5a5" }} />
-              Cancelled
+              {t.reports.cancelled}
             </span>
           </div>
         </div>
@@ -190,7 +194,7 @@ export function ReportsClient({
 
         {/* Top Services */}
         <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 18 }}>Top Services</h2>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 18 }}>{t.reports.topServices}</h2>
           {topServices.length === 0 ? (
             <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>No data yet</p>
           ) : (
@@ -206,7 +210,7 @@ export function ReportsClient({
                       </div>
                       <div style={{ display: "flex", gap: 14 }}>
                         <span style={{ color: "var(--muted-foreground)" }}>{svc.count}x</span>
-                        <span style={{ color: "var(--primary)", fontWeight: 500 }}>${svc.revenue.toFixed(0)}</span>
+                        <span style={{ color: "var(--primary)", fontWeight: 500 }}>₺{svc.revenue.toFixed(0)}</span>
                       </div>
                     </div>
                     <div style={{ height: 5, background: "var(--muted)", borderRadius: 3, overflow: "hidden" }}>
@@ -221,9 +225,9 @@ export function ReportsClient({
 
         {/* Staff Performance */}
         <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 18 }}>Staff Performance</h2>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 18 }}>{t.reports.staffPerformance}</h2>
           {staffPerformance.length === 0 ? (
-            <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>No data yet</p>
+            <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>{t.reports.noData}</p>
           ) : (
             <div style={{ display: "grid", gap: 14 }}>
               {staffPerformance.map((s, i) => {
@@ -244,8 +248,8 @@ export function ReportsClient({
                         {i === 0 && <span style={{ fontSize: 11, color: "#c9956b" }}>⭐</span>}
                       </div>
                       <div style={{ display: "flex", gap: 14, fontSize: 13 }}>
-                        <span style={{ color: "var(--muted-foreground)" }}>{s.count} appts</span>
-                        <span style={{ color: "var(--primary)", fontWeight: 500 }}>${s.revenue.toFixed(0)}</span>
+                        <span style={{ color: "var(--muted-foreground)" }}>{s.count} {t.staff.appointments}</span>
+                        <span style={{ color: "var(--primary)", fontWeight: 500 }}>₺{s.revenue.toFixed(0)}</span>
                       </div>
                     </div>
                     <div style={{ height: 5, background: "var(--muted)", borderRadius: 3, overflow: "hidden" }}>
