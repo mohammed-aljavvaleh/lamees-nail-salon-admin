@@ -199,7 +199,7 @@ export function ReportsClient({
         <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: 17, marginBottom: 18 }}>{t.reports.topServices}</h2>
           {topServices.length === 0 ? (
-            <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>No data yet</p>
+            <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>{t.reports.noData}</p>
           ) : (
             <div style={{ display: "grid", gap: 12 }}>
               {topServices.map((svc, i) => {

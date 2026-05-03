@@ -315,7 +315,7 @@ export function AppointmentForm({ services, staff }: Props) {
                 {date && time && (() => {
                   const d = new Date(`${date}T${time}:00`);
                   const hhmm = formatTime(time);
-                  return ` · ${MONTHS[d.getMonth()]} ${d.getDate()} ${t.appointmentForm.at} ${hhmm}`;
+                  return ` · ${d.getDate()} ${MONTHS[d.getMonth()]} ${t.appointmentForm.at} ${hhmm}`;
                 })()}
               </span>
               <span style={{ fontWeight: 600, fontSize: 16 }}>₺{selectedService.price}</span>

@@ -11,6 +11,7 @@ type Appointment = {
   customerName: string;
   customerPhone?: string | null;
   status: string;
+  priceAtBooking: number;
   service: { name: string; price: number; duration: number };
   staff: { name: string };
 };
@@ -235,7 +236,7 @@ export function DashboardClient({
                 </div>
 
                 <div style={{ fontSize: 13.5, fontWeight: 500, color: "var(--primary)", width: 60, textAlign: "right" }}>
-                  ₺{appt.service.price}
+                  ₺{appt.priceAtBooking}
                 </div>
 
                 <span

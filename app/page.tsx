@@ -30,7 +30,7 @@ export default async function DashboardPage() {
 
   const todayRevenue = todayAppointments
     .filter((a) => a.status !== "CANCELLED")
-    .reduce((s, a) => s + a.service.price, 0);
+    .reduce((s, a) => s + a.priceAtBooking, 0);
 
   return (
     <DashboardClient

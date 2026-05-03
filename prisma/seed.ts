@@ -14,19 +14,19 @@ async function main() {
 
   // Services
   const manicure = await prisma.service.create({
-    data: { name: "Classic Manicure", price: 25, duration: 30 },
+    data: { name: "Classic Manicure", price: 250, duration: 30 },
   });
   const gel = await prisma.service.create({
-    data: { name: "Gel Manicure", price: 40, duration: 45 },
+    data: { name: "Gel Manicure", price: 400, duration: 45 },
   });
   const pedicure = await prisma.service.create({
-    data: { name: "Classic Pedicure", price: 35, duration: 45 },
+    data: { name: "Classic Pedicure", price: 350, duration: 45 },
   });
   const nailArt = await prisma.service.create({
-    data: { name: "Nail Art", price: 15, duration: 20 },
+    data: { name: "Nail Art", price: 150, duration: 20 },
   });
   const acrylic = await prisma.service.create({
-    data: { name: "Acrylic Full Set", price: 65, duration: 90 },
+    data: { name: "Acrylic Full Set", price: 650, duration: 90 },
   });
 
   console.log("Services created");
@@ -60,139 +60,165 @@ async function main() {
       // Today
       {
         customerName: "Aisha Malik",
-        customerPhone: "+90 50 100 0001",
+        customerPhone: "0501000001",
         startTime: apptTime(0, 9, 0),
         serviceId: manicure.id,
         staffId: sara.id,
+        priceAtBooking: manicure.price,
         status: "COMPLETED",
       },
       {
         customerName: "Reem Al-Farsi",
-        customerPhone: "+90 50 100 0002",
+        customerPhone: "05010006302",
         startTime: apptTime(0, 10, 30),
         serviceId: gel.id,
         staffId: lamees.id,
+        priceAtBooking: gel.price,
         status: "COMPLETED",
       },
       {
         customerName: "Dana Khalid",
+        customerPhone: "05234953498",
         startTime: apptTime(0, 13, 0),
         serviceId: pedicure.id,
         staffId: nour.id,
+        priceAtBooking: pedicure.price,
         status: "SCHEDULED",
       },
       {
         customerName: "Lina Saeed",
-        customerPhone: "+90 50 100 0003",
+        customerPhone: "0501000003",
         startTime: apptTime(0, 14, 30),
         serviceId: acrylic.id,
         staffId: lamees.id,
+        priceAtBooking: acrylic.price,
         status: "SCHEDULED",
       },
       {
         customerName: "Hessa Nasser",
+        customerPhone: "05344456235",
         startTime: apptTime(0, 16, 0),
         serviceId: nailArt.id,
         staffId: sara.id,
+        priceAtBooking: nailArt.price,
         status: "CANCELLED",
       },
 
       // Yesterday
       {
         customerName: "Mona Hassan",
-        customerPhone: "+90 50 100 0004",
+        customerPhone: "0501000004",
         startTime: apptTime(-1, 10, 0),
         serviceId: gel.id,
         staffId: sara.id,
+        priceAtBooking: gel.price,
         status: "COMPLETED",
       },
       {
         customerName: "Fatima Al-Ali",
+        customerPhone: "05394338494",
         startTime: apptTime(-1, 11, 30),
         serviceId: manicure.id,
         staffId: nour.id,
+        priceAtBooking: manicure.price,
         status: "COMPLETED",
       },
       {
         customerName: "Sara Al-Mutairi",
+        customerPhone: "05230904334",
         startTime: apptTime(-1, 14, 0),
         serviceId: pedicure.id,
         staffId: lamees.id,
+        priceAtBooking: pedicure.price,
         status: "COMPLETED",
       },
 
       // 2 days ago
       {
         customerName: "Noura Ahmed",
-        customerPhone: "+90 50 100 0005",
+        customerPhone: "0501000005",
         startTime: apptTime(-2, 9, 30),
         serviceId: acrylic.id,
         staffId: lamees.id,
+        priceAtBooking: acrylic.price,
         status: "COMPLETED",
       },
       {
         customerName: "Wafa Al-Rashid",
+        customerPhone: "05353994434",
         startTime: apptTime(-2, 13, 0),
         serviceId: gel.id,
         staffId: sara.id,
+        priceAtBooking: gel.price,
         status: "COMPLETED",
       },
 
       // 3 days ago
       {
         customerName: "Basma Yousef",
+        customerPhone: "05344304334",
         startTime: apptTime(-3, 10, 0),
         serviceId: nailArt.id,
         staffId: nour.id,
+        priceAtBooking: nailArt.price,
         status: "COMPLETED",
       },
       {
         customerName: "Hana Al-Dosari",
-        customerPhone: "+90 50 100 0006",
+        customerPhone: "0501000006",
         startTime: apptTime(-3, 15, 0),
         serviceId: manicure.id,
         staffId: sara.id,
+        priceAtBooking: manicure.price,
         status: "COMPLETED",
       },
 
       // Tomorrow
       {
         customerName: "Rawan Al-Otaibi",
-        customerPhone: "+90 50 100 0007",
+        customerPhone: "0501000007",
         startTime: apptTime(1, 10, 0),
         serviceId: gel.id,
         staffId: sara.id,
+        priceAtBooking: gel.price,
         status: "SCHEDULED",
       },
       {
         customerName: "Manal Hamdan",
+        customerPhone: "05394302334",
         startTime: apptTime(1, 12, 0),
         serviceId: pedicure.id,
         staffId: nour.id,
+        priceAtBooking: pedicure.price,
         status: "SCHEDULED",
       },
       {
         customerName: "Dalal Al-Shammari",
+        customerPhone: "05394304332",
         startTime: apptTime(1, 14, 30),
         serviceId: acrylic.id,
         staffId: lamees.id,
+        priceAtBooking: acrylic.price,
         status: "SCHEDULED",
       },
 
       // Day after tomorrow
       {
         customerName: "Shahad Bilal",
-        customerPhone: "+90 50 100 0008",
+        customerPhone: "0501000008",
         startTime: apptTime(2, 11, 0),
         serviceId: manicure.id,
         staffId: nour.id,
+        priceAtBooking: manicure.price,
         status: "SCHEDULED",
       },
       {
         customerName: "Nadia Al-Rashidi",
+        customerPhone: "05394304334",
         startTime: apptTime(2, 13, 30),
         serviceId: gel.id,
         staffId: lamees.id,
+        priceAtBooking: gel.price,
         status: "SCHEDULED",
       },
     ],
