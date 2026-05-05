@@ -113,6 +113,7 @@
     "total": "Toplam",
     "schedule": "Randevuyu Kaydet",
     "scheduling": "Kaydediliyor...",
+    "staffError": "Bu personel üyesi zaten o zaman diliminde bir randevusu var.",
     "at": "saat",
     "errors": {
       "phoneRequired": "Telefon numarası gerekli",

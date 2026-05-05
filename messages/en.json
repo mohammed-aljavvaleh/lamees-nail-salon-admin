@@ -113,6 +113,7 @@
     "total": "Total",
     "schedule": "Schedule Appointment",
     "scheduling": "Scheduling...",
+    "staffError": "This staff member already has an appointment during that time.",
     "at": "at",
     "errors": {
       "phoneRequired": "Phone number is required",

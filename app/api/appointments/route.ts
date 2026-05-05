@@ -40,9 +40,9 @@ export async function POST(req: NextRequest) {
       startTime,
       serviceId,
       staffId,
-      sessions,       // number of sessions (default 1)
-      price,          // overridden price (defaults to service.price)
-      installmentAmount, // payment made now (optional, for packages)
+      sessions,
+      price,
+      installmentAmount,
     } = body;
 
     if (!customerId || !startTime || !serviceId || !staffId) {
@@ -51,13 +51,44 @@ export async function POST(req: NextRequest) {
 
     const sessionCount = Math.max(1, Number(sessions) || 1);
 
-    const [customer, service] = await Promise.all([
+    const [customer, service, longestService] = await Promise.all([
       prisma.customer.findUnique({ where: { id: customerId } }),
       prisma.service.findUnique({ where: { id: serviceId } }),
+      prisma.service.findFirst({ orderBy: { duration: "desc" }, select: { duration: true } }),
     ]);
 
     if (!customer) return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 });
+
+    // ── Overlap check ─────────────────────────────────────────────────
+    const apptStart = new Date(startTime);
+    const apptEnd = new Date(apptStart.getTime() + service.duration * 60 * 1000);
+    const maxDuration = longestService?.duration ?? 120;
+
+    const conflict = await prisma.appointment.findFirst({
+      where: {
+        staffId,
+        status: { not: "CANCELLED" },
+        startTime: {
+          lt: apptEnd,
+          gt: new Date(apptStart.getTime() - maxDuration * 60 * 1000),
+        },
+      },
+      include: { service: true },
+    });
+
+    if (conflict) {
+      const conflictEnd = new Date(
+        conflict.startTime.getTime() + conflict.service.duration * 60 * 1000
+      );
+      if (conflict.startTime < apptEnd && conflictEnd > apptStart) {
+        return NextResponse.json(
+          { error: "Bu personel üyesi zaten o zaman diliminde bir randevusu var." },
+          { status: 409 }
+        );
+      }
+    }
+    // ─────────────────────────────────────────────────────────────────
 
     const totalPrice = price !== undefined ? Number(price) : service.price * sessionCount;
     const paidNow = installmentAmount ? Number(installmentAmount) : 0;
@@ -67,7 +98,7 @@ export async function POST(req: NextRequest) {
       const appointment = await prisma.appointment.create({
         data: {
           customerId,
-          startTime: new Date(startTime),
+          startTime: apptStart,
           serviceId,
           staffId,
           status: "SCHEDULED",
@@ -91,7 +122,6 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Record initial installment if a payment was made at booking
       if (paidNow > 0) {
         await tx.installment.create({
           data: {
@@ -105,11 +135,11 @@ export async function POST(req: NextRequest) {
       const appointment = await tx.appointment.create({
         data: {
           customerId,
-          startTime: new Date(startTime),
+          startTime: apptStart,
           serviceId,
           staffId,
           status: "SCHEDULED",
-          priceAtBooking: paidNow, // first installment amount
+          priceAtBooking: paidNow,
           userPackageId: pkg.id,
         },
         include: { service: true, staff: true, customer: true, userPackage: true },
