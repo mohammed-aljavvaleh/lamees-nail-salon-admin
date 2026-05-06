@@ -8,6 +8,7 @@ import {
   Search, Plus, Minus, Package,
 } from "lucide-react";
 import Link from "next/link";
+import { useLang } from "@/components/providers/language-provider";
 
 type Service = { id: string; name: string; price: number; duration: number };
 type Staff = { id: string; name: string; role: string };
@@ -29,6 +30,7 @@ export function AppointmentForm({ services, staff }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useLang();
 
   // ── Customer state ──────────────────────────────────────────────
   const [customerMode, setCustomerMode] = useState<"search" | "new">("search");
@@ -95,20 +97,20 @@ export function AppointmentForm({ services, staff }: Props) {
     const digits = value.replace(/\D/g, "").slice(0, 11);
     setNewPhone(digits);
     if (digits.length === 0) {
-      setPhoneError("Phone number is required");
+      setPhoneError(t.appointmentForm.errors.phoneRequired);
     } else if (!digits.startsWith("05")) {
-      setPhoneError("Must start with 05");
+      setPhoneError(t.appointmentForm.errors.phoneMustStart);
     } else if (digits.length < 11) {
-      setPhoneError(`${digits.length}/11 — too short`);
+      setPhoneError(`${digits.length}/11 — ${t.appointmentForm.errors.short}`);
     } else {
       setPhoneError("");
     }
   }
 
   function validatePhone(): boolean {
-    if (newPhone.length === 0) { setPhoneError("Phone number is required"); return false; }
-    if (!newPhone.startsWith("05")) { setPhoneError("Must start with 05"); return false; }
-    if (newPhone.length !== 11) { setPhoneError("Must be exactly 11 digits"); return false; }
+    if (newPhone.length === 0) { setPhoneError(t.appointmentForm.errors.phoneRequired); return false; }
+    if (!newPhone.startsWith("05")) { setPhoneError(t.appointmentForm.errors.phoneMustStart); return false; }
+    if (newPhone.length !== 11) { setPhoneError(t.appointmentForm.errors.PhoneTooShort); return false; }
     return true;
   }
 
@@ -125,7 +127,7 @@ export function AppointmentForm({ services, staff }: Props) {
 
     // Create new customer first if in "new" mode
     if (customerMode === "new") {
-      if (!newName.trim()) { setError("Customer name is required"); return; }
+      if (!newName.trim()) { setError(t.appointmentForm.errors.nameRequired); return; }
       if (!validatePhone()) return;
 
       try {
@@ -188,13 +190,13 @@ export function AppointmentForm({ services, staff }: Props) {
           href="/appointments"
           style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--muted-foreground)", fontSize: 13, textDecoration: "none", marginBottom: 16 }}
         >
-          <ArrowLeft size={14} /> Back to Appointments
+          <ArrowLeft size={14} /> {t.appointmentForm.back}
         </Link>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>
-          New Appointment
+          {t.appointmentForm.title}
         </h1>
         <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 4 }}>
-          Fill in the details below to schedule an appointment.
+          {t.appointmentForm.subtitle}
         </p>
       </div>
 
@@ -204,7 +206,7 @@ export function AppointmentForm({ services, staff }: Props) {
           {/* ── Customer Section ───────────────────────────────── */}
           <section style={sectionStyle}>
             <h2 style={sectionTitleStyle}>
-              <User size={15} color="var(--primary)" /> Customer
+              <User size={15} color="var(--primary)" /> {t.appointmentForm.customerInfo}
             </h2>
 
             {/* Mode toggle */}
@@ -218,7 +220,7 @@ export function AppointmentForm({ services, staff }: Props) {
                   color: customerMode === "search" ? "white" : "var(--foreground)",
                 }}
               >
-                <Search size={12} /> Search existing
+                <Search size={12} /> {t.appointmentForm.searchCustomer}
               </button>
               <button
                 type="button"
@@ -229,7 +231,7 @@ export function AppointmentForm({ services, staff }: Props) {
                   color: customerMode === "new" ? "white" : "var(--foreground)",
                 }}
               >
-                <Plus size={12} /> New customer
+                <Plus size={12} /> {t.appointmentForm.newCustomer}
               </button>
             </div>
 
@@ -255,7 +257,7 @@ export function AppointmentForm({ services, staff }: Props) {
                       onClick={() => setSelectedCustomer(null)}
                       style={{ fontSize: 12, color: "var(--muted-foreground)", background: "none", border: "none", cursor: "pointer" }}
                     >
-                      Change
+                      {t.appointmentForm.change}
                     </button>
                   </div>
                 ) : (
@@ -263,7 +265,7 @@ export function AppointmentForm({ services, staff }: Props) {
                     <input
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search by name or phone..."
+                      placeholder={t.appointmentForm.searchPlaceholder}
                       style={inputStyle}
                     />
                     {searching && (
@@ -296,7 +298,7 @@ export function AppointmentForm({ services, staff }: Props) {
                     )}
                     {searchQuery.length >= 2 && !searching && searchResults.length === 0 && (
                       <div style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 6 }}>
-                        No customers found. Switch to "New customer" to add them.
+                        {t.appointmentForm.errors.customerNotFound}
                       </div>
                     )}
                   </div>
@@ -307,18 +309,18 @@ export function AppointmentForm({ services, staff }: Props) {
             {customerMode === "new" && (
               <div style={{ display: "grid", gap: 14 }}>
                 <div>
-                  <label style={labelStyle}>Full Name</label>
+                  <label style={labelStyle}>{t.appointmentForm.fullName}</label>
                   <input
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
-                    placeholder="Customer full name"
+                    placeholder= {t.appointmentForm.fullNamePlaceholder}
                     style={inputStyle}
                   />
                 </div>
                 <div>
                   <label style={labelStyle}>
                     <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                      <Phone size={11} /> Phone Number
+                      <Phone size={11} /> {t.appointmentForm.phoneNumber}
                     </span>
                   </label>
                   <input
@@ -339,7 +341,7 @@ export function AppointmentForm({ services, staff }: Props) {
                   />
                   <div style={{ marginTop: 5, minHeight: 18, display: "flex", justifyContent: "space-between" }}>
                     <span style={{ fontSize: 12, color: phoneError ? "#c45c5c" : newPhone.length === 11 ? "#2d7a2d" : "var(--muted-foreground)" }}>
-                      {phoneError ? phoneError : newPhone.length === 11 ? "Valid number ✓" : "11 digits, must start with 05"}
+                      {phoneError ? phoneError : newPhone.length === 11 ? t.appointmentForm.validNumber : t.appointmentForm.phoneNumberRules}
                     </span>
                     <span style={{ fontSize: 11, color: "var(--muted-foreground)", fontVariantNumeric: "tabular-nums" }}>
                       {newPhone.length}/11
@@ -353,7 +355,7 @@ export function AppointmentForm({ services, staff }: Props) {
           {/* ── Service Selection ──────────────────────────────── */}
           <section style={sectionStyle}>
             <h2 style={sectionTitleStyle}>
-              <TurkishLira size={15} color="var(--primary)" /> Service
+              <TurkishLira size={15} color="var(--primary)" /> {t.appointmentForm.service}
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {services.map((svc) => (
@@ -375,7 +377,7 @@ export function AppointmentForm({ services, staff }: Props) {
                   </div>
                   <div style={{ display: "flex", gap: 12, fontSize: 12, color: "var(--muted-foreground)" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                      <Clock size={11} /> {svc.duration} min
+                      <Clock size={11} /> {svc.duration}{t.services.min}
                     </span>
                     <span style={{ color: "var(--primary)", fontWeight: 500 }}>₺{svc.price}</span>
                   </div>
@@ -384,7 +386,7 @@ export function AppointmentForm({ services, staff }: Props) {
             </div>
             {services.length === 0 && (
               <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>
-                No services found.{" "}
+                {t.appointmentForm.noServices}{" "}
                 <Link href="/services" style={{ color: "var(--primary)" }}>Add services →</Link>
               </p>
             )}
@@ -394,13 +396,13 @@ export function AppointmentForm({ services, staff }: Props) {
           {selectedService && (
             <section style={sectionStyle}>
               <h2 style={sectionTitleStyle}>
-                <Package size={15} color="var(--primary)" /> Sessions & Pricing
+                <Package size={15} color="var(--primary)" /> {t.appointmentForm.packages}
               </h2>
               <div style={{ display: "grid", gap: 18 }}>
 
                 {/* Sessions stepper */}
                 <div>
-                  <label style={labelStyle}>Number of Sessions</label>
+                  <label style={labelStyle}>{t.appointmentForm.appNumber}</label>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <button
                       type="button"
@@ -429,13 +431,13 @@ export function AppointmentForm({ services, staff }: Props) {
                         fontSize: 12, color: "var(--primary)", background: "var(--primary-light)",
                         padding: "3px 10px", borderRadius: 20, fontWeight: 500,
                       }}>
-                        Package
+                        {t.appointmentForm.package}
                       </span>
                     )}
                   </div>
                   {sessions === 1 && (
                     <p style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 6 }}>
-                      Increase sessions to create a multi-session package.
+                      {t.appointmentForm.packetSubtitle}
                     </p>
                   )}
                 </div>
@@ -443,10 +445,7 @@ export function AppointmentForm({ services, staff }: Props) {
                 {/* Total price override */}
                 <div>
                   <label style={labelStyle}>
-                    Total Price (₺)
-                    <span style={{ fontWeight: 400, marginLeft: 6, textTransform: "none", letterSpacing: 0 }}>
-                      — default: ₺{defaultTotalPrice}
-                    </span>
+                    {t.appointmentForm.total} (₺)
                   </label>
                   <input
                     type="number"
@@ -463,10 +462,7 @@ export function AppointmentForm({ services, staff }: Props) {
                 {isPackage && (
                   <div>
                     <label style={labelStyle}>
-                      Payment at Booking (₺)
-                      <span style={{ fontWeight: 400, marginLeft: 6, textTransform: "none", letterSpacing: 0 }}>
-                        — installment amount paid now
-                      </span>
+                      {t.appointmentForm.downPayment} (₺)
                     </label>
                     <input
                       type="number"
@@ -492,12 +488,12 @@ export function AppointmentForm({ services, staff }: Props) {
           {/* ── Staff & Time ───────────────────────────────────── */}
           <section style={sectionStyle}>
             <h2 style={sectionTitleStyle}>
-              <Calendar size={15} color="var(--primary)" /> Date & Time
+              <Calendar size={15} color="var(--primary)" /> {t.appointmentForm.dateTime}
             </h2>
             <div style={{ display: "grid", gap: 14 }}>
               {/* Staff picker */}
               <div>
-                <label style={labelStyle}>Staff Member</label>
+                <label style={labelStyle}>{t.appointmentForm.staffMember}</label>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {staff.map((s) => (
                     <button
@@ -524,7 +520,7 @@ export function AppointmentForm({ services, staff }: Props) {
                 </div>
                 {staff.length === 0 && (
                   <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>
-                    No staff found.{" "}
+                    {t.appointmentForm.noStaff}
                     <Link href="/staff" style={{ color: "var(--primary)" }}>Add staff →</Link>
                   </p>
                 )}
@@ -533,7 +529,7 @@ export function AppointmentForm({ services, staff }: Props) {
               {/* Date & Time */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 <div>
-                  <label style={labelStyle}>Date</label>
+                  <label style={labelStyle}>{t.appointmentForm.date}</label>
                   <input
                     type="date"
                     value={date}
@@ -544,7 +540,7 @@ export function AppointmentForm({ services, staff }: Props) {
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>Time Slot</label>
+                  <label style={labelStyle}>{t.appointmentForm.timeSlot}</label>
                   <select value={time} onChange={(e) => setTime(e.target.value)} style={inputStyle}>
                     {TIME_SLOTS.map((slot) => (
                       <option key={slot} value={slot}>{formatTime(slot)}</option>
@@ -570,11 +566,11 @@ export function AppointmentForm({ services, staff }: Props) {
             }}>
               <span>
                 <strong>{selectedService.name}</strong>
-                {isPackage ? ` · ${sessions} sessions` : ` · ${selectedService.duration} min`}
+                {isPackage ? ` · ${sessions} sessions` : ` · ${selectedService.duration} ${t.services.min}`}
                 {date && time && (() => {
                   const d = new Date(`${date}T${time}:00`);
-                  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                  return ` · ${d.getDate()} ${months[d.getMonth()]} at ${formatTime(time)}`;
+                  const months = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+                  return ` · ${d.getDate()} ${months[d.getMonth()]} ${t.appointmentForm.at} ${formatTime(time)}`;
                 })()}
               </span>
               <div style={{ textAlign: "right" }}>
@@ -600,7 +596,7 @@ export function AppointmentForm({ services, staff }: Props) {
               href="/appointments"
               style={{ ...btnStyle, background: "var(--muted)", color: "var(--foreground)", textDecoration: "none", textAlign: "center" }}
             >
-              Cancel
+              {t.common.cancel}
             </Link>
             <button
               type="submit"
@@ -614,7 +610,7 @@ export function AppointmentForm({ services, staff }: Props) {
                 cursor: loading ? "not-allowed" : "pointer",
               }}
             >
-              {loading ? "Scheduling..." : isPackage ? "Create Package & Schedule" : "Schedule Appointment"}
+              {loading ? t.appointmentForm.scheduling : isPackage ? t.appointmentForm.createPackageAndSchedule : t.appointmentForm.schedule}
             </button>
           </div>
 
@@ -626,7 +622,7 @@ export function AppointmentForm({ services, staff }: Props) {
 
 function formatTime(slot: string) {
   const [h, m] = slot.split(":").map(Number);
-  const ampm = h >= 12 ? "PM" : "AM";
+  const ampm = h >= 12 ? "ÖS" : "ÖÖ";
   const h12 = h % 12 || 12;
   return `${h12}:${m.toString().padStart(2, "0")} ${ampm}`;
 }

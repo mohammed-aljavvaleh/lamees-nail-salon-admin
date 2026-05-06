@@ -67,7 +67,7 @@ export function CustomerProfileClient({ customer }: { customer: CustomerWithDeta
               <Phone size={12} /> {customer.phone}
             </div>
             <div style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 2 }}>
-              {t.customers.customerScince} {fmt(customer.createdAt, "MMMM yyyy")}
+              {t.customers.customerSince} {fmt(customer.createdAt, "MMMM yyyy")}
             </div>
           </div>
         </div>
