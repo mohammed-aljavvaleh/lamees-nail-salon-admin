@@ -92,3 +92,9 @@ model Appointment {
 
   status         String   @default("SCHEDULED") // SCHEDULED, CANCELLED, COMPLETED
 }
+
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+}

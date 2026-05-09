@@ -177,7 +177,7 @@ export function DashboardClient({
               >
                 <div style={{ width: 64, flexShrink: 0 }}>
                   <div style={{ fontSize: 13.5, fontWeight: 500 }}>
-                    {format(new Date(appt.startTime), "h:mm")}
+                    {format(new Date(appt.startTime), "hh:mm")}
                   </div>
                   <div style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
                     {format(new Date(appt.startTime), "a")}

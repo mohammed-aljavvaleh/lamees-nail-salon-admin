@@ -11,6 +11,7 @@ import {
   BarChart2,
   Sparkles,
   X,
+  LogOut
 } from "lucide-react";
 import { useLang } from "@/components/providers/language-provider";
 import { LanguageToggle } from "@/components/layout/language-toggle";
@@ -32,6 +33,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { href: "/staff", label: t.nav.staff, icon: IdCardLanyard },
     { href: "/reports", label: t.nav.reports, icon: BarChart2 },
   ];
+
+  async function handleLogout() {
+  await fetch("/api/auth/logout", { method: "POST" });
+  window.location.href = "/login";
+}
 
   return (
     <>
@@ -136,6 +142,20 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           display: "flex", flexDirection: "column", gap: 10,
         }}>
           <LanguageToggle />
+            <button
+            onClick={handleLogout}
+            style={{
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "8px 12px", borderRadius: 8,
+              background: "none", border: "1px solid var(--border)",
+              cursor: "pointer", color: "var(--muted-foreground)",
+              fontSize: 13, width: "100%",
+            }}
+          >
+            <LogOut size={14} />
+            Sign out
+          </button>
+
           <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
             <div style={{ fontFamily: "var(--font-display)", fontSize: 13, color: "var(--foreground)" }}>
               {t.nav.adminPanel}
