@@ -66,7 +66,7 @@ export function ShellClient({ children }: { children: React.ReactNode }) {
           </header>
 
           {/* Page content */}
-          <main style={{ flex: 1, overflowY: "auto" }}>
+          <main style={{ flex: 1, overflow: "auto", WebkitOverflowScrolling: "touch" }}>
             {children}
           </main>
         </div>

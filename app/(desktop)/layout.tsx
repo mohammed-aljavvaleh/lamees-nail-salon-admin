@@ -1,4 +1,4 @@
-import "./globals.css";
+import "../globals.css";
 import type { Metadata } from "next";
 import { ShellClient } from "@/components/layout/shell-client";
 import { QueryProvider } from "@/components/providers/query-provider";

@@ -115,9 +115,9 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
   const topStaff = [...staff].sort((a, b) => b.appointmentCount - a.appointmentCount)[0];
 
   return (
-    <div style={{ padding: "32px 36px", maxWidth: 900 }}>
+    <div className="admin-page" style={{ padding: "32px 36px", maxWidth: 900 }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
+      <div className="admin-header" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
         <div>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>{t.staff.title}</h1>
           <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 2 }}>
@@ -130,7 +130,7 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
       </div>
 
       {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
+      <div className="admin-stats" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
         {[
           { label: t.staff.totalTeam, value: staff.length.toString(), icon: IdCardLanyard, color: "#c9956b" },
           { label: t.appointments.totalAppointments, value: totalAppointments.toString(), icon: CalendarDays, color: "#7b9ec9" },
@@ -156,9 +156,9 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
           <button onClick={openCreate} style={primaryBtnStyle}>{t.staff.addFirst}</button>
         </div>
       ) : (
-        <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
+        <div className="admin-scroll-x" style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflowX: "auto", overflowY: "hidden" }}>
           {/* Table header */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 160px 120px 140px 100px", padding: "10px 20px", borderBottom: "1px solid var(--border)", fontSize: 11, fontWeight: 600, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          <div className="admin-table" style={{ display: "grid", gridTemplateColumns: "1fr 160px 120px 140px 100px", padding: "10px 20px", borderBottom: "1px solid var(--border)", fontSize: 11, fontWeight: 600, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
             <span>{t.staff.name}</span>
             <span>{t.staff.role}</span>
             <span>{t.appointments.appointments}</span>
@@ -173,7 +173,7 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
             return (
               <div
                 key={member.id}
-                className="animate-fade-in"
+                className="animate-fade-in admin-table"
                 style={{
                   animationDelay: `${i * 40}ms`,
                   display: "grid",
@@ -239,7 +239,7 @@ export function StaffClient({ initialStaff }: { initialStaff: StaffMember[] }) {
           style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}
           onClick={(e) => e.target === e.currentTarget && closeForm()}
         >
-          <div className="animate-scale-in" style={{ background: "var(--card)", borderRadius: 14, padding: "28px 30px", width: 420, boxShadow: "0 20px 60px rgba(0,0,0,0.15)" }}>
+          <div className="animate-scale-in admin-modal" style={{ background: "var(--card)", borderRadius: 14, padding: "28px 30px", width: 420, boxShadow: "0 20px 60px rgba(0,0,0,0.15)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22 }}>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22 }}>
                 {editId ? t.staff.editMember : t.staff.addMember}

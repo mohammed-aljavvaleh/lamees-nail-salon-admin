@@ -26,7 +26,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { t } = useLang();
 
   const nav = [
-    { href: "/", label: t.nav.dashboard, icon: LayoutDashboard },
+    { href: "/dashboard", label: t.nav.dashboard, icon: LayoutDashboard },
     { href: "/appointments", label: t.nav.appointments, icon: CalendarDays },
     { href: "/customers", label: t.nav.customers, icon: Users },
     { href: "/services", label: t.nav.services, icon: Scissors },

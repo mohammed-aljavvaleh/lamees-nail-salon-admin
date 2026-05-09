@@ -46,6 +46,7 @@ export default function LoginPage() {
         borderRadius: 16,
         padding: "40px 44px",
         width: 380,
+        maxWidth: "calc(100vw - 28px)",
         boxShadow: "0 8px 40px rgba(0,0,0,0.08)",
       }}>
         <div style={{ marginBottom: 28, textAlign: "center" }}>

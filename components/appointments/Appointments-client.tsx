@@ -21,7 +21,6 @@ import {
   FileText,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useLang } from "@/components/providers/language-provider";
 
 type Service = { id: string; name: string; price: number; duration: number };
@@ -98,7 +97,7 @@ function PostponeDialog({
 
   return (
     <div style={overlayStyle} onClick={onClose}>
-      <div style={dialogStyle} onClick={(e) => e.stopPropagation()}>
+      <div className="admin-modal" style={dialogStyle} onClick={(e) => e.stopPropagation()}>
         <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
           Postpone Appointment
         </h3>
@@ -193,7 +192,7 @@ function NotesDialog({
 
   return (
     <div style={overlayStyle} onClick={onClose}>
-      <div style={dialogStyle} onClick={(e) => e.stopPropagation()}>
+      <div className="admin-modal" style={dialogStyle} onClick={(e) => e.stopPropagation()}>
         <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
           Appointment Note
         </h3>
@@ -227,21 +226,14 @@ function NotesDialog({
 
 export function AppointmentsClient({
   initialAppointments,
-  services,
   staff,
 }: Props) {
-  const router = useRouter();
   const { t } = useLang();
 
   const MONTHS = [
     t.months.january, t.months.february, t.months.march, t.months.april,
     t.months.may, t.months.june, t.months.july, t.months.august,
     t.months.september, t.months.october, t.months.november, t.months.december,
-  ];
-
-  const FULL_DAYS = [
-    t.fullDays.sunday, t.fullDays.monday, t.fullDays.tuesday, t.fullDays.wednesday,
-    t.fullDays.thursday, t.fullDays.friday, t.fullDays.saturday,
   ];
 
   const [appointments, setAppointments] = useState(initialAppointments);
@@ -338,7 +330,7 @@ export function AppointmentsClient({
   };
 
   return (
-    <div style={{ padding: "32px 36px" }}>
+    <div className="admin-page" style={{ padding: "32px 36px" }}>
       {/* Dialogs */}
       {postponeAppt && (
         <PostponeDialog
@@ -356,7 +348,7 @@ export function AppointmentsClient({
       )}
 
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+      <div className="admin-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
         <div>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>
             {t.appointments.title}
@@ -365,7 +357,7 @@ export function AppointmentsClient({
             {appointments.length} {t.appointments.totalAppointments}
           </p>
         </div>
-        <div style={{ display: "flex", gap: 10 }}>
+        <div className="admin-actions" style={{ display: "flex", gap: 10 }}>
           <div style={{ display: "flex", border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden" }}>
             {(["calendar", "list"] as View[]).map((v) => (
               <button
@@ -409,9 +401,9 @@ export function AppointmentsClient({
       </div>
 
       {view === "calendar" ? (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20 }}>
+        <div className="admin-calendar-layout" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20 }}>
           {/* Calendar grid */}
-          <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
+          <div className="admin-calendar-scroll" style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflowX: "auto", overflowY: "hidden" }}>
             <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: 18 }}>
                 {MONTHS[currentMonth.getMonth()]} {currentMonth.getFullYear()}
@@ -432,7 +424,7 @@ export function AppointmentsClient({
               </div>
             </div>
 
-            <div style={{ padding: 16 }}>
+            <div className="admin-calendar-grid" style={{ padding: 16 }}>
               {/* Weekday headers */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", marginBottom: 8 }}>
                 {[
@@ -514,7 +506,7 @@ export function AppointmentsClient({
                 {selectedDayAppts.length} appointment{selectedDayAppts.length !== 1 ? "s" : ""}
               </p>
             </div>
-            <div style={{ overflowY: "auto", maxHeight: 500 }}>
+            <div className="admin-day-panel" style={{ overflowY: "auto", maxHeight: 500 }}>
               {selectedDayAppts.length === 0 ? (
                 <div style={{ padding: "32px 20px", textAlign: "center", color: "var(--muted-foreground)", fontSize: 13 }}>
                   No appointments
@@ -525,7 +517,6 @@ export function AppointmentsClient({
                     key={appt.id}
                     appt={appt}
                     onStatusChange={updateStatus}
-                    onDelete={deleteAppt}
                     onPostpone={() => setPostponeAppt(appt)}
                     onEditNotes={() => setNotesAppt(appt)}
                     loading={loadingId === appt.id}
@@ -540,8 +531,8 @@ export function AppointmentsClient({
         /* List view */
         <div>
           {/* Filters */}
-          <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-            <div style={{ position: "relative", flex: 1, maxWidth: 300 }}>
+          <div className="admin-filter-row" style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+            <div className="admin-search" style={{ position: "relative", flex: 1, maxWidth: 300 }}>
               <Search
                 size={14}
                 style={{
@@ -583,9 +574,10 @@ export function AppointmentsClient({
             </select>
           </div>
 
-          <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
+          <div className="admin-scroll-x" style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflowX: "auto", overflowY: "hidden" }}>
             {/* Table header */}
             <div
+              className="admin-appointment-table"
               style={{
                 display: "grid",
                 gridTemplateColumns: "120px 1fr 140px 140px 90px 100px 180px",
@@ -613,6 +605,7 @@ export function AppointmentsClient({
             ) : (
               filteredList.map((appt, i) => (
                 <div
+                  className="admin-appointment-table"
                   key={appt.id}
                   style={{
                     display: "grid",
@@ -736,7 +729,6 @@ export function AppointmentsClient({
 function AppointmentCard({
   appt,
   onStatusChange,
-  onDelete,
   onPostpone,
   onEditNotes,
   loading,
@@ -744,7 +736,6 @@ function AppointmentCard({
 }: {
   appt: Appointment;
   onStatusChange: (id: string, status: string) => void;
-  onDelete: (id: string) => void;
   onPostpone: () => void;
   onEditNotes: () => void;
   loading: boolean;

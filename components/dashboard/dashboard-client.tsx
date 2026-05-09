@@ -68,7 +68,7 @@ export function DashboardClient({
   ];
 
   return (
-    <div style={{ padding: "32px 36px", maxWidth: 1100 }}>
+    <div className="admin-page" style={{ padding: "32px 36px", maxWidth: 1100 }}>
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginBottom: 4 }}>
@@ -80,7 +80,7 @@ export function DashboardClient({
       </div>
 
       {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 32 }}>
+      <div className="admin-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 32 }}>
         {stats.map((stat) => (
           <div
             key={stat.label}
@@ -114,7 +114,7 @@ export function DashboardClient({
       </div>
 
       {/* Status row */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 28 }}>
+      <div className="admin-status-row" style={{ display: "flex", gap: 12, marginBottom: 28 }}>
         {[
           { label: t.dashboard.scheduled, value: scheduled, color: "#1a6fa0", bg: "#e8f4fd" },
           { label: t.dashboard.completed, value: completed, color: "#2d7a2d", bg: "#e8f5e8" },
@@ -167,7 +167,7 @@ export function DashboardClient({
             {todayAppointments.map((appt, i) => (
               <div
                 key={appt.id}
-                className="animate-fade-in"
+                className="animate-fade-in admin-card-row"
                 style={{
                   animationDelay: `${i * 40}ms`,
                   padding: "14px 22px",

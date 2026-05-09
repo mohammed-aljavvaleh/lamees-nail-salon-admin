@@ -29,9 +29,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   // Load saved preference on mount
   useEffect(() => {
-    const saved = localStorage.getItem("lang") as Language;
-    if (saved === "en" || saved === "tr") setLangState(saved);
-    setMounted(true);
+    window.requestAnimationFrame(() => {
+      const saved = localStorage.getItem("lang") as Language;
+      if (saved === "en" || saved === "tr") setLangState(saved);
+      setMounted(true);
+    });
   }, []);
 
   function setLang(l: Language) {

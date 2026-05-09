@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { format } from "date-fns";
-import { TrendingUp, CalendarDays, XCircle, CheckCircle, BarChart2, TurkishLira} from "lucide-react";
+import { TrendingUp, CalendarDays, CheckCircle, BarChart2, TurkishLira} from "lucide-react";
 import { useLang } from "@/components/providers/language-provider";
-import { Appointment } from "@/app/generated/prisma";
 
 type DayData = { date: string; count: number; revenue: number; cancelled: number; completed: number };
 type ServiceStat = { name: string; count: number; revenue: number };
@@ -74,9 +71,9 @@ export function ReportsClient({
   ];
 
   return (
-    <div style={{ padding: "32px 36px", maxWidth: 1100 }}>
+    <div className="admin-page" style={{ padding: "32px 36px", maxWidth: 1100 }}>
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
+      <div className="admin-header" style={{ marginBottom: 28 }}>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>{t.reports.title}</h1>
         <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 2 }}>
           {t.reports.subtitle}
@@ -84,7 +81,7 @@ export function ReportsClient({
       </div>
 
       {/* Summary Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
+      <div className="admin-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
         {stats.map((stat) => (
           <div
             key={stat.label}
@@ -104,7 +101,7 @@ export function ReportsClient({
       </div>
 
       {/* Charts row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div className="admin-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
 
         {/* Revenue Bar Chart */}
         <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>
@@ -193,7 +190,7 @@ export function ReportsClient({
       </div>
 
       {/* Bottom row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div className="admin-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
 
         {/* Top Services */}
         <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 22px" }}>

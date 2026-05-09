@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Clock, X, Check, Scissors, TurkishLira } from "lucide-react";
+import { Plus, Pencil, Trash2, Clock, X, Scissors, TurkishLira } from "lucide-react";
 import { useLang } from "@/components/providers/language-provider";
 
 type Service = { id: string; name: string; price: number; duration: number };
@@ -99,15 +99,14 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
     }
   }
 
-  const totalRevenuePotential = services.reduce((s, svc) => s + svc.price, 0);
   const avgDuration = services.length
     ? Math.round(services.reduce((s, svc) => s + svc.duration, 0) / services.length)
     : 0;
 
   return (
-    <div style={{ padding: "32px 36px", maxWidth: 900 }}>
+    <div className="admin-page" style={{ padding: "32px 36px", maxWidth: 900 }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
+      <div className="admin-header" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
         <div>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>{t.services.title}</h1>
           <p style={{ color: "var(--muted-foreground)", fontSize: 13, marginTop: 2 }}>
@@ -120,7 +119,7 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
       </div>
 
       {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
+      <div className="admin-stats" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
         {[
           { label: t.services.total, value: services.length.toString(), icon: Scissors, color: "#c9956b" },
           { label: t.services.duration, value: `${avgDuration} ${t.services.min}`, icon: Clock, color: "#7b9ec9" },
@@ -206,8 +205,8 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
           }}
           onClick={(e) => e.target === e.currentTarget && closeForm()}
         >
-          <div
-            className="animate-scale-in"
+            <div
+              className="animate-scale-in admin-modal"
             style={{
               background: "var(--card)", borderRadius: 14, padding: "28px 30px",
               width: 440, boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
@@ -235,7 +234,7 @@ export function ServicesClient({ initialServices }: { initialServices: Service[]
                     autoFocus
                   />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                <div className="admin-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                   <div>
                     <label style={labelStyle}>{t.services.price}</label>
                     <input

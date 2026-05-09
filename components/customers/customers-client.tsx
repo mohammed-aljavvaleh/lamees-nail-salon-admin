@@ -26,9 +26,9 @@ export function CustomersClient({ customers }: { customers: Customer[] }) {
     : customers;
 
   return (
-    <div style={{ padding: "32px 36px", maxWidth: 860 }}>
+    <div className="admin-page" style={{ padding: "32px 36px", maxWidth: 860 }}>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+      <div className="admin-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
         <div>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 500 }}>
             {t.customers.title}
@@ -122,7 +122,7 @@ export function CustomersClient({ customers }: { customers: Customer[] }) {
                 href={`/customers/${c.id}`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
-                <div style={{
+                <div className="admin-card-row" style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                   padding: "16px 20px",
                   background: "var(--card)",
@@ -153,7 +153,7 @@ export function CustomersClient({ customers }: { customers: Customer[] }) {
                   </div>
 
                   {/* Right: stats */}
-                  <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+                  <div className="admin-card-row-right" style={{ display: "flex", gap: 20, alignItems: "center" }}>
                     <div style={{ textAlign: "center" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--muted-foreground)" }}>
                         <Calendar size={11} /> {t.appointments.appointments}

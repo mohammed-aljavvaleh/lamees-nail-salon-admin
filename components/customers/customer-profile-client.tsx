@@ -53,7 +53,7 @@ export function CustomerProfileClient({
   );
 
   return (
-    <div style={{ padding: "32px 36px", maxWidth: 820 }}>
+    <div className="admin-page" style={{ padding: "32px 36px", maxWidth: 820 }}>
 
       {/* Back */}
       <Link
@@ -64,7 +64,7 @@ export function CustomerProfileClient({
       </Link>
 
       {/* ── Profile Header ───────────────────────────────────────── */}
-      <div style={{
+      <div className="admin-card-row" style={{
         background: "var(--card)", border: "1px solid var(--border)",
         borderRadius: 14, padding: "24px 28px", marginBottom: 20,
         display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -93,7 +93,7 @@ export function CustomerProfileClient({
         </div>
 
         {/* Stats */}
-        <div style={{ display: "flex", gap: 28, textAlign: "center" }}>
+        <div className="admin-card-row-right" style={{ display: "flex", gap: 28, textAlign: "center" }}>
           <div>
             <div style={{ fontSize: 22, fontWeight: 700 }}>{customer.appointments.length}</div>
             <div style={{ fontSize: 12, color: "var(--muted-foreground)" }}>{t.appointments.appointments}</div>
@@ -152,7 +152,6 @@ export function CustomerProfileClient({
                       {/* Schedule Next Session button */}
                       <ScheduleNextSessionDialog
                         pkg={pkg}
-                        customerId={customer.id}
                         staffList={staffList}
                         onScheduled={() => router.refresh()}
                       />
@@ -601,12 +600,10 @@ type PackageForNextSession = {
 
 function ScheduleNextSessionDialog({
   pkg,
-  customerId: _customerId,
   staffList,
   onScheduled,
 }: {
   pkg: PackageForNextSession;
-  customerId: string;
   staffList: Staff[];
   onScheduled: () => void;
 }) {
@@ -684,6 +681,7 @@ function ScheduleNextSessionDialog({
           onClick={() => !saving && setOpen(false)}
         >
           <div
+            className="admin-modal"
             style={{
               background: "var(--card)", border: "1px solid var(--border)",
               borderRadius: 14, padding: "28px 32px",

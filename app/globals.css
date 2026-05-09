@@ -83,3 +83,130 @@ textarea,
 .animate-fade-in { animation: fadeIn 0.25s ease forwards; }
 .animate-slide-in { animation: slideIn 0.2s ease forwards; }
 .animate-scale-in { animation: scaleIn 0.2s ease forwards; }
+
+.admin-page {
+  width: 100%;
+}
+
+.admin-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-scroll-x > * {
+  min-width: max-content;
+}
+
+.admin-text-wrap {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+@media (max-width: 767px) {
+  .admin-page {
+    padding: 18px 14px 88px !important;
+    max-width: none !important;
+  }
+
+  .admin-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .admin-header h1 {
+    font-size: 25px !important;
+    line-height: 1.1 !important;
+  }
+
+  .admin-actions {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+
+  .admin-actions > * {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+  }
+
+  .admin-stats {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .admin-two-col,
+  .admin-calendar-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-filter-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .admin-filter-row > *,
+  .admin-search {
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  .admin-status-row {
+    flex-wrap: wrap !important;
+  }
+
+  .admin-status-row > a {
+    margin-left: 0 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .admin-card-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .admin-card-row-right {
+    width: 100% !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .admin-modal {
+    width: calc(100vw - 28px) !important;
+    max-width: calc(100vw - 28px) !important;
+    padding: 22px 18px !important;
+    max-height: calc(100dvh - 28px) !important;
+    overflow-y: auto !important;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-table {
+    min-width: 760px !important;
+  }
+
+  .admin-appointment-table {
+    min-width: 920px !important;
+  }
+
+  .admin-calendar-grid {
+    min-width: 520px !important;
+  }
+
+  .admin-calendar-scroll {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-day-panel {
+    max-height: none !important;
+  }
+}

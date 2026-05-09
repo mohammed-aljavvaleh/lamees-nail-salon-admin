@@ -56,23 +56,23 @@ export function AppointmentForm({ services, staff }: Props) {
 
   const selectedService = services.find((s) => s.id === serviceId);
 
-  // When service changes, reset price override and sessions
-  useEffect(() => {
+  function selectService(id: string) {
+    setServiceId(id);
     setPriceOverride("");
     setSessions(1);
     setInstallmentAmount("");
-  }, [serviceId]);
+  }
 
   const defaultTotalPrice = selectedService
     ? selectedService.price * sessions
     : 0;
   const totalPrice =
     priceOverride !== "" ? Number(priceOverride) : defaultTotalPrice;
+  const visibleSearchResults = searchQuery.length >= 2 ? searchResults : [];
 
   // ── Customer search ─────────────────────────────────────────────
   useEffect(() => {
     if (searchQuery.length < 2) {
-      setSearchResults([]);
       return;
     }
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
@@ -183,7 +183,7 @@ export function AppointmentForm({ services, staff }: Props) {
   const isPackage = sessions > 1;
 
   return (
-    <div style={{ padding: "32px 36px", maxWidth: 680 }}>
+    <div className="admin-page" style={{ padding: "32px 36px", maxWidth: 680 }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <Link
@@ -210,7 +210,7 @@ export function AppointmentForm({ services, staff }: Props) {
             </h2>
 
             {/* Mode toggle */}
-            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+            <div className="admin-actions" style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
               <button
                 type="button"
                 onClick={() => { setCustomerMode("search"); setSelectedCustomer(null); }}
@@ -273,12 +273,12 @@ export function AppointmentForm({ services, staff }: Props) {
                         Searching...
                       </div>
                     )}
-                    {searchResults.length > 0 && (
+                    {visibleSearchResults.length > 0 && (
                       <div style={{
                         marginTop: 6, border: "1px solid var(--border)", borderRadius: 8,
                         overflow: "hidden", background: "var(--card)",
                       }}>
-                        {searchResults.map((c) => (
+                        {visibleSearchResults.map((c) => (
                           <button
                             key={c.id}
                             type="button"
@@ -296,7 +296,7 @@ export function AppointmentForm({ services, staff }: Props) {
                         ))}
                       </div>
                     )}
-                    {searchQuery.length >= 2 && !searching && searchResults.length === 0 && (
+                    {searchQuery.length >= 2 && !searching && visibleSearchResults.length === 0 && (
                       <div style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 6 }}>
                         {t.appointmentForm.errors.customerNotFound}
                       </div>
@@ -357,12 +357,12 @@ export function AppointmentForm({ services, staff }: Props) {
             <h2 style={sectionTitleStyle}>
               <TurkishLira size={15} color="var(--primary)" /> {t.appointmentForm.service}
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div className="admin-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {services.map((svc) => (
                 <button
                   key={svc.id}
                   type="button"
-                  onClick={() => setServiceId(svc.id)}
+                  onClick={() => selectService(svc.id)}
                   style={{
                     padding: "14px 16px",
                     border: `2px solid ${serviceId === svc.id ? "var(--primary)" : "var(--border)"}`,
@@ -527,7 +527,7 @@ export function AppointmentForm({ services, staff }: Props) {
               </div>
 
               {/* Date & Time */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <div className="admin-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 <div>
                   <label style={labelStyle}>{t.appointmentForm.date}</label>
                   <input
