@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function GET(
   _: NextRequest,
@@ -38,7 +39,9 @@ export async function PATCH(
           where: { id },
           select: { userPackageId: true, status: true },
         });
-
+        
+        
+        
         if (!current) throw new Error("Appointment not found");
         if (current.status === "COMPLETED") throw new Error("Already completed");
 
@@ -78,7 +81,7 @@ export async function PATCH(
 
         return updated;
       });
-
+      revalidatePath("/dashboard");
       return NextResponse.json(appointment);
     }
 
@@ -153,6 +156,7 @@ export async function PATCH(
       data,
       include: { service: true, staff: true, customer: true, userPackage: true },
     });
+    revalidatePath("/dashboard");
     return NextResponse.json(appointment);
   } catch (err) {
     console.error(err);

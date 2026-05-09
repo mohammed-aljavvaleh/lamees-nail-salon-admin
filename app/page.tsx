@@ -22,7 +22,7 @@ export default async function DashboardPage() {
     ]);
 
   const todayRevenue = todayAppointments
-    .filter((a) => a.status !== "CANCELLED")
+    .filter((a) => a.status === "COMPLETED")
     .reduce((s, a) => s + a.priceAtBooking, 0);
 
   return (

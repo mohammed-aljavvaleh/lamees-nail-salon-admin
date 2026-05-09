@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     }
 
     const appointments = await prisma.appointment.findMany({
-      where: { startTime: { gte: startDate }, status: { not: "CANCELLED" } },
+      where: { startTime: { gte: startDate }, status: { not: "COMPLETED" } },
       include: { service: true, staff: true },
       orderBy: { startTime: "asc" },
     });
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       const dayKey = appt.startTime.toISOString().slice(0, 10);
       if (!byDay[dayKey]) byDay[dayKey] = { count: 0, revenue: 0 };
       byDay[dayKey].count++;
-      byDay[dayKey].revenue += appt.service.price;
+      byDay[dayKey].revenue += appt.priceAtBooking;
     }
 
     // Top services
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
       const sid = appt.serviceId;
       if (!serviceMap[sid]) serviceMap[sid] = { name: appt.service.name, count: 0, revenue: 0 };
       serviceMap[sid].count++;
-      serviceMap[sid].revenue += appt.service.price;
+      serviceMap[sid].revenue += appt.priceAtBooking;
     }
 
     // Staff performance
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
       staffMap[stid].count++;
     }
 
-    const totalRevenue = appointments.reduce((s: number, a: typeof appointments[0]) => s + a.service.price, 0);
+    const totalRevenue = appointments.reduce((s: number, a: typeof appointments[0]) => s + a.priceAtBooking, 0);
     const totalCount = appointments.length;
 
     // Cancelled count
