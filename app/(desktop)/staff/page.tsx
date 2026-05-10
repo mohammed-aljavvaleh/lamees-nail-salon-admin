@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { StaffClient } from "@/components/staff/staff-client";
 
+export const dynamic = "force-dynamic";
 export default async function StaffPage() {
   const [staff, appointments] = await Promise.all([
     prisma.staff.findMany({ orderBy: { name: "asc" } }),

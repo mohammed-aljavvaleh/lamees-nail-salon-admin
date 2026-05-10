@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { ReportsClient } from "@/components/reports/reports-client";
 
+export const dynamic = "force-dynamic";
 export default async function ReportsPage() {
   // Default: last 7 days
   const startDate = new Date();

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { CustomerProfileClient } from "@/components/customers/customer-profile-client";
 
+export const dynamic = "force-dynamic";
 export default async function CustomerProfilePage({
   params,
 }: {

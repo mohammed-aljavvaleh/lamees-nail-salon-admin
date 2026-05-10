@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { AppointmentsClient } from "@/components/appointments/Appointments-client";
 
+export const dynamic = "force-dynamic";
 export default async function AppointmentsPage() {
   const [appointments, services, staff] = await Promise.all([
     prisma.appointment.findMany({

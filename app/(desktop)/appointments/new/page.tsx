@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { AppointmentForm } from "@/components/appointments/appointment-form";
 
+export const dynamic = "force-dynamic";
 export default async function NewAppointmentPage() {
   const [services, staff] = await Promise.all([
     prisma.service.findMany({ orderBy: { name: "asc" } }),
