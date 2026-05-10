@@ -7,7 +7,20 @@
     "signIn": "Giriş Yap",
     "loading": "Giriş yapılıyor...",
     "incomplete": "Eksik alanlar",
-    "error": "Geçersiz kullanıcı adı veya parola"
+    "error": "Geçersiz kullanıcı adı veya parola",
+    "changePw": "Şifreyi değiştir",
+    "currentPw": "MEVCUT ŞİFRE",
+    "newPw": "YENİ ŞİFRE",
+    "confirmPw": "YENİ ŞİFREYİ ONAYLA",
+    "updatePw": "Şifreyi Güncelle",
+    "updatingPw": "Güncelleniyor…",
+    "pwSuccess": "✓ Şifre başarıyla değiştirildi",
+    "pwMismatch": "Yeni şifreler eşleşmiyor",
+    "pwTooShort": "Şifre en az 6 karakter olmalıdır",
+    "pwWrong": "Mevcut şifre hatalı",
+    "pwFailed": "Şifre değiştirilemedi",
+    "backToLogin": "← Girişe dön",
+    "changeSubtitle": "Şifrenizi değiştirin"
   },
   "nav": {
     "dashboard": "Panel",
