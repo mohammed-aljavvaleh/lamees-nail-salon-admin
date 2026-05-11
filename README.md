@@ -87,8 +87,8 @@ A modern admin panel for managing nail salon appointments, customers, services, 
 
 3. **Deploy**
    - Vercel will automatically detect Next.js and run the build
-   - The `postinstall` script will generate Prisma client
-   - The `build` script will push the database schema
+   - The `build` script will generate the Prisma client
+   - The database schema will be pushed manually after deployment
 
 ### 3. Set up Database Schema
 
