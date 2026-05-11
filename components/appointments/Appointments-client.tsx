@@ -503,7 +503,7 @@ export function AppointmentsClient({
           <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
             <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)" }}>
               <h3 style={{ fontSize: 14, fontWeight: 600 }}>
-                {selectedDate ? format(selectedDate, "EEEE, MMMM d") : "Select a day"}
+                {selectedDate && format(selectedDate, "EEEE, d MMMM", { locale: lang === "tr" ? tr : enUS })}
               </h3>
               <p style={{ fontSize: 12, color: "var(--muted-foreground)", marginTop: 2 }}>
                 {selectedDayAppts.length} {selectedDayAppts.length !== 1 ? t.appointments.appointments : t.appointments.appointment}
