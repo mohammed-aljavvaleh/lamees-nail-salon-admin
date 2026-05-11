@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/require-auth";
+import { revalidatePath } from "next/cache";
 
 export async function GET(req: NextRequest) {
   const unauth = await requireAuth();
@@ -111,6 +112,9 @@ export async function POST(req: NextRequest) {
         },
         include: { service: true, staff: true, customer: true, userPackage: true },
       });
+      revalidatePath("/appointments");
+      revalidatePath("/dashboard");
+      revalidatePath("/mobile/appointments");
       return NextResponse.json(appointment, { status: 201 });
     }
 
@@ -154,6 +158,9 @@ export async function POST(req: NextRequest) {
       return appointment;
     });
 
+    revalidatePath("/appointments");
+    revalidatePath("/dashboard");
+    revalidatePath("/mobile/appointments");
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
     console.error(err);
